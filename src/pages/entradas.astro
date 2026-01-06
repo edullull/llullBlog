@@ -1,0 +1,113 @@
+---
+import BlogStyles from '../components/BlogStyles.astro';
+---
+
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect fill='%230f1629' width='64' height='64'/><circle fill='%2399b4ff' cx='32' cy='32' r='18'/><path fill='%23ffffff' d='M25 34l7-12 7 12h-14z'/></svg>"
+    />
+    <title>Últimas Entradas | LlullBlog</title>
+    <BlogStyles />
+  </head>
+  <body class="entradas-page">
+    <header>
+      <h1>Últimas Entradas</h1>
+      <p>Aquí encontrarás todas mis publicaciones</p>
+    </header>
+
+    <main>
+      <section>
+        <h2>Entradas personalizadas</h2>
+        <div id="custom-entries-list" class="entry-list" aria-live="polite">
+          <p class="muted">No hay entradas personalizadas aún.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>Entrada 1</h2>
+        <p>Esta es una entrada de ejemplo. Próximamente habrá más contenido aquí...</p>
+        <p><small>Publicado el: 15 de enero de 2024</small></p>
+      </section>
+
+      <section>
+        <h2>Entrada 2</h2>
+        <p>Otra entrada de ejemplo para mostrar cómo se verán las entradas del blog.</p>
+        <p><small>Publicado el: 10 de enero de 2024</small></p>
+      </section>
+
+    </main>
+
+    <main>
+      <section>
+        <h2>Entrada 3</h2>
+        <p>Una tercera entrada para demostrar el diseño de viñetas.</p>
+        <p><small>Publicado el: 5 de enero de 2024</small></p>
+      </section>
+    
+
+      <section>
+        <h2>Entrada 4</h2>
+        <p>Una cuarta entrada para demostrar el diseño de los cambios que voy a transmitir a dia de hoy.</p>
+        <p><small>Publicado el: 5 de enero de 2024</small></p>
+      </section>
+
+      </main>   
+    <footer>
+      <p>
+        <a href="/">← Volver al inicio</a>
+      </p>
+    </footer>
+    <script>
+      (() => {
+        type Entry = { title: string; body: string; date?: string };
+        const STORAGE_KEY = 'entradasPersonalizadas';
+        const listEl = document.getElementById('custom-entries-list') as HTMLElement | null;
+
+        if (!listEl) return;
+
+        const escapeHtml = (str: string) =>
+          str
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+
+        const loadEntries = (): Entry[] => {
+          try {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            return stored ? (JSON.parse(stored) as Entry[]) : [];
+          } catch (e) {
+            return [];
+          }
+        };
+
+        const renderEntries = () => {
+          const entries = loadEntries();
+          listEl.innerHTML = '';
+          if (!entries.length) {
+            listEl.innerHTML = '<p class="muted">No hay entradas personalizadas aún.</p>';
+            return;
+          }
+          entries.forEach(({ title, body, date }) => {
+            const card = document.createElement('article');
+            card.className = 'entry-card';
+            card.innerHTML = `
+              <h3>${escapeHtml(title)}</h3>
+              <p>${escapeHtml(body)}</p>
+              <p class="muted"><small>${escapeHtml(date ?? '')}</small></p>
+            `;
+            listEl.appendChild(card);
+          });
+        };
+
+        renderEntries();
+      })();
+    </script>
+  </body>
+</html>

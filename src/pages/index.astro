@@ -21,6 +21,8 @@ const hoy = new Date().toLocaleDateString('es-ES');
     <header>
       <h1>¡Hola {nombre}!</h1>
       <p>Bienvenido a tu blog personal construido con Astro</p>
+      <h2>Hoy es: {hoy}</h2>
+
     </header>
 
     <main>
@@ -43,6 +45,7 @@ const hoy = new Date().toLocaleDateString('es-ES');
           </div>
           <button type="submit">Guardar entrada</button>
           <div id="entry-status" class="entry-status" aria-live="polite"></div>
+          
         </form>
       </section>
 
@@ -58,15 +61,7 @@ const hoy = new Date().toLocaleDateString('es-ES');
         <p>Próximamente estaré compartiendo mis ideas aquí...</p>
       </section>
 
-      <section>
-        <h2>Hoy es: {hoy}</h2>
-      </section>
-    </main>
 
-    <footer>
-      <p>
-      </p>
-    </footer>
     <script>
       (() => {
         type Entry = { title: string; body: string; date?: string };
@@ -143,6 +138,17 @@ const hoy = new Date().toLocaleDateString('es-ES');
           form.reset();
           titleEl.focus();
         });
+        const deleteAllBtn = document.createElement('button');
+        deleteAllBtn.textContent = 'Eliminar entradas';
+        deleteAllBtn.className = 'button';
+        deleteAllBtn.style.cssText = 'cursor: pointer; margin: 20px auto 0 auto; display: block; background: linear-gradient(135deg, #00c8ff, #00ffc8); border-radius: 10px; color: black; padding: 10px; margin-top: 20px; cursor: pointer; width: 50%;';
+        deleteAllBtn.addEventListener('click', () => {
+          if (confirm('¿Eliminar todas las entradas?')) {
+            localStorage.removeItem('entradasPersonalizadas');
+            renderEntries();
+          }
+        });
+        document.querySelector('section')?.appendChild(deleteAllBtn);
 
         renderEntries();
       })();

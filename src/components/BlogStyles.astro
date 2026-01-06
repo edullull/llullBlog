@@ -1,0 +1,314 @@
+---
+// Componente de estilos globales
+---
+
+<style is:global>
+  :root {
+    --radius-home: 12px;
+    --radius-entradas: 16px;
+  }
+
+
+
+  /* Página de inicio */
+  body.home-page {
+    --home-hero-height: 120px;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2.5rem 2rem 3.5rem;
+    line-height: 1.7;
+    color: #e8f6f9;
+    background: radial-gradient(circle at 25% 20%, #0a3d62 0, #021a2b 32%),
+      radial-gradient(circle at 80% 0%, #0b7fab 0, #021a2b 30%),
+      linear-gradient(135deg, #031420 0%, #061e2f 50%, #02101c 100%);
+  }
+
+  body.home-page header,
+  body.home-page section,
+  body.home-page footer {
+    background: rgba(8, 24, 40, 0.8);
+    border: 1px solid rgba(0, 200, 255, 0.35);
+    box-shadow:
+      0 14px 30px rgba(0, 0, 0, 0.4),
+      0 0 22px rgba(0, 200, 255, 0.18);
+    backdrop-filter: blur(8px);
+    border-radius: var(--radius-home);
+    position: relative;
+    overflow: hidden;
+  }
+
+  body.home-page header::after,
+  body.home-page section::after,
+  body.home-page footer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: calc(var(--radius-home) - 2px);
+    pointer-events: none;
+  }
+
+  body.home-page header {
+    text-align: center;
+    margin-bottom: 2.2rem;
+    padding: 2.3rem 2rem;
+    min-height: var(--home-hero-height);
+  }
+
+  body.home-page h1 {
+    margin: 0;
+    font-size: 2.6rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #7be0ff;
+    text-shadow: 0 0 18px rgba(0, 200, 255, 0.55);
+  }
+
+  body.home-page header p {
+    margin-top: 0.65rem;
+    color: #9dd7e7;
+    font-weight: 500;
+  }
+
+  body.home-page main {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.6rem;
+  }
+
+  body.home-page section {
+    padding: 1.6rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
+  }
+
+  body.home-page .home-new-entry {
+    grid-column: 1 / -1;
+    min-height: var(--home-hero-height);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  body.home-page section:hover {
+    transform: translateY(-5px);
+    box-shadow:
+      0 18px 40px rgba(0, 0, 0, 0.5),
+      0 0 22px rgba(0, 200, 255, 0.3);
+    border-color: rgba(0, 255, 200, 0.55);
+  }
+
+  body.home-page h2 {
+    margin: 0 0 0.45rem 0;
+    color: #e8f6f9;
+    font-size: 1.2rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  body.home-page h2 a {
+    color: #e8f6f9;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  body.home-page h2 a:hover {
+    color: #7be0ff;
+  }
+
+  /* Página de entradas */
+  body.entradas-page {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2.5rem 2rem 3.5rem;
+    line-height: 1.7;
+    color: #e8ecf5;
+    background: radial-gradient(circle at 20% 20%, #1a2a6c 0, #0f1629 30%),
+      radial-gradient(circle at 80% 0%, #4b0082 0, #0f1629 30%),
+      linear-gradient(135deg, #0f1629 0%, #1a1f35 50%, #0a0f1f 100%);
+  }
+
+  body.entradas-page header,
+  body.entradas-page section,
+  body.entradas-page footer {
+    background: rgba(18, 26, 46, 0.75);
+    border: 1px solid rgba(90, 125, 255, 0.35);
+    box-shadow:
+      0 15px 40px rgba(0, 0, 0, 0.45),
+      0 0 25px rgba(90, 125, 255, 0.22);
+    backdrop-filter: blur(8px);
+    border-radius: var(--radius-entradas);
+    position: relative;
+    overflow: hidden;
+  }
+
+  body.entradas-page header::after,
+  body.entradas-page section::after,
+  body.entradas-page footer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: calc(var(--radius-entradas) - 2px);
+    pointer-events: none;
+  }
+
+  body.entradas-page header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    padding: 2.5rem 2rem;
+  }
+
+  body.entradas-page h1 {
+    margin: 0;
+    font-size: 2.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #b7c7ff;
+    text-shadow: 0 0 20px rgba(90, 125, 255, 0.65);
+  }
+
+  body.entradas-page header p {
+    margin-top: 0.75rem;
+    color: #8ea3d7;
+    font-weight: 500;
+  }
+
+  body.entradas-page main {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  body.entradas-page section {
+    padding: 1.75rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  body.entradas-page section:hover {
+    transform: translateY(-6px);
+    box-shadow:
+      0 20px 45px rgba(0, 0, 0, 0.55),
+      0 0 25px rgba(90, 125, 255, 0.35);
+  }
+
+  body.entradas-page h2 {
+    margin: 0 0 0.6rem 0;
+    color: #e2e8ff;
+    font-size: 1.25rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* Compartidos */
+  a {
+    color: #7be0ff;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+  }
+
+  a:hover {
+    color: #c1f0ff;
+  }
+
+  p {
+    margin: 0.35rem 0 0.4rem;
+  }
+
+  small {
+    color: #8cb9c8;
+  }
+
+  footer {
+    text-align: center;
+    padding: 1.3rem;
+  }
+
+  /* Formulario y listas de entradas personalizadas */
+  .entry-form {
+    display: grid;
+    gap: 0.9rem;
+    margin-top: 1rem;
+    padding: 0.75rem 0.9rem 0.9rem;
+    border-radius: 10px;
+    background: rgba(2, 12, 20, 0.85);
+  }
+
+  .entry-form label {
+    display: block;
+    font-weight: 600;
+    color: #a7f5ff;
+  }
+
+  .entry-form input,
+  .entry-form textarea {
+    width: 97%;
+    background: rgba(5, 24, 34, 0.85);
+    border: 1px solid rgba(0, 200, 255, 0.4);
+    color: #e8f6f9;
+    padding: 0.75rem 0.9rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .entry-form input:focus,
+  .entry-form textarea:focus {
+    border-color: rgba(0, 255, 200, 0.7);
+    box-shadow: 0 0 0 2px rgba(0, 255, 200, 0.15);
+  }
+
+  .entry-form button {
+    background: linear-gradient(135deg, #00c8ff, #00ffc8);
+    color: #04121d;
+    border: none;
+    padding: 0.85rem 1rem;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.2s ease;
+  }
+
+  .entry-form button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(0, 255, 200, 0.2);
+  }
+
+  .entry-form button:active {
+    transform: translateY(0);
+  }
+
+  .entry-status {
+    color: #a7f5ff;
+    font-size: 0.95rem;
+    min-height: 1.2rem;
+  }
+
+  .entry-list {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .entry-card {
+    border: 1px solid rgba(0, 200, 255, 0.35);
+    border-radius: 10px;
+    padding: 1rem 1.1rem;
+    background: rgba(4, 18, 29, 0.7);
+  }
+
+  .entry-card h3 {
+    margin: 0 0 0.4rem 0;
+    color: #7be0ff;
+  }
+
+  .entry-card p {
+    margin: 0.2rem 0;
+  }
+
+  .muted {
+    color: #8cb9c8;
+  }
+</style>
