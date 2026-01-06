@@ -1,11 +1,151 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import BlogStyles from '../components/BlogStyles.astro';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const nombre = "Eduardo";
+const hoy = new Date().toLocaleDateString('es-ES');
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect fill='%23031420' width='64' height='64'/><circle fill='%237be0ff' cx='32' cy='32' r='18'/><path fill='%23ffffff' d='M25 34l7-12 7 12h-14z'/></svg>"
+    />
+    <title>Mi Blog Personal | LlullBlog</title>
+    <BlogStyles />
+  </head>
+  <body class="home-page">
+    <header>
+      <h1>¡Hola {nombre}!</h1>
+      <p>Bienvenido a tu blog personal construido con Astro</p>
+    </header>
+
+    <main>
+      <section class="home-new-entry">
+        <h2>Nueva entrada</h2>
+        <form id="new-entry-form" class="entry-form">
+          <div>
+            <label for="entry-title">Título</label>
+            <input id="entry-title" name="title" type="text" placeholder="Ej: Mi primer post" required />
+          </div>
+          <div>
+            <label for="entry-body">Contenido</label>
+            <textarea
+              id="entry-body"
+              name="body"
+              rows="4"
+              placeholder="Escribe aquí tu entrada..."
+              required
+            ></textarea>
+          </div>
+          <button type="submit">Guardar entrada</button>
+          <div id="entry-status" class="entry-status" aria-live="polite"></div>
+        </form>
+      </section>
+
+      <section>
+        <h2>Mis entradas</h2>
+        <div id="custom-entries-list" class="entry-list" aria-live="polite">
+          <p class="muted">No hay entradas personalizadas aún.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2><a href="/entradas">Últimas entradas</a></h2>
+        <p>Próximamente estaré compartiendo mis ideas aquí...</p>
+      </section>
+
+      <section>
+        <h2>Hoy es: {hoy}</h2>
+      </section>
+    </main>
+
+    <footer>
+      <p>
+      </p>
+    </footer>
+    <script>
+      (() => {
+        type Entry = { title: string; body: string; date?: string };
+        const STORAGE_KEY = 'entradasPersonalizadas';
+        const form = document.getElementById('new-entry-form') as HTMLFormElement | null;
+        const titleEl = document.getElementById('entry-title') as HTMLInputElement | null;
+        const bodyEl = document.getElementById('entry-body') as HTMLTextAreaElement | null;
+        const statusEl = document.getElementById('entry-status') as HTMLElement | null;
+        const listEl = document.getElementById('custom-entries-list') as HTMLElement | null;
+
+        if (!form || !titleEl || !bodyEl || !statusEl || !listEl) return;
+
+        const escapeHtml = (str: string) =>
+          str
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+
+        const loadEntries = (): Entry[] => {
+          try {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            return stored ? (JSON.parse(stored) as Entry[]) : [];
+          } catch (e) {
+            return [];
+          }
+        };
+
+        const saveEntries = (entries: Entry[]) =>
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+
+        const renderEntries = () => {
+          const entries = loadEntries();
+          listEl.innerHTML = '';
+          if (!entries.length) {
+            listEl.innerHTML = '<p class="muted">No hay entradas personalizadas aún.</p>';
+            return;
+          }
+          entries.forEach(({ title, body, date }) => {
+            const card = document.createElement('article');
+            card.className = 'entry-card';
+            card.innerHTML = `
+              <h3>${escapeHtml(title)}</h3>
+              <p>${escapeHtml(body)}</p>
+              <p class="muted"><small>${escapeHtml(date ?? '')}</small></p>
+            `;
+            listEl.appendChild(card);
+          });
+        };
+
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const title = titleEl.value.trim();
+          const body = bodyEl.value.trim();
+          if (!title || !body) {
+            statusEl.textContent = 'Completa el título y el contenido.';
+            return;
+          }
+          const entries = loadEntries();
+          const newEntry = {
+            title,
+            body,
+            date: new Date().toLocaleDateString('es-ES', {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric'
+            })
+          };
+          entries.unshift(newEntry);
+          saveEntries(entries);
+          renderEntries();
+          statusEl.textContent = 'Entrada guardada localmente.';
+          form.reset();
+          titleEl.focus();
+        });
+
+        renderEntries();
+      })();
+    </script>
+  </body>
+</html>
