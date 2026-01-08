@@ -1,59 +1,82 @@
 ---
-import BlogStyles from '../components/BlogStyles.astro';
 ---
-
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Entradas</title>
-    <BlogStyles />
+    <title>Todas las Entradas</title>
+    <style is:global>
+      /* REPETIMOS EL ESTILO PARA QUE NO HAYA "SALTOS" VISUALES */
+      html, body { margin: 0; background-color: #030a12; color: #fff; font-family: 'Inter', sans-serif; }
+      body { background: radial-gradient(circle at top right, #0a1e30, #030a12 85%); background-attachment: fixed; }
+      header { padding: 4rem 1rem; text-align: center; }
+      header h1 { font-size: 3rem; }
+      
+      .grid-all {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1.5rem 5rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+      }
+
+      .glass-card {
+        background: rgba(10, 25, 41, 0.7);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(0, 229, 255, 0.15);
+        border-radius: 20px;
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .btn-delete {
+        background: none;
+        border: 1px solid #ff6b6b;
+        color: #ff6b6b;
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        margin-top: 1.5rem;
+        align-self: flex-start;
+      }
+    </style>
   </head>
-  <body class="entradas-page">
-    <header>
-      <h1>Últimas Entradas</h1>
-    </header>
-
-    <main id="grid" class="main-container">
-      </main>
-
-    <footer style="text-align: center; padding: 4rem;">
-      <a href="/" class="btn-link">← VOLVER AL INICIO</a>
-    </footer>
+  <body>
+    <header><h1>Todas las Publicaciones</h1></header>
+    <main class="grid-all" id="grid-container"></main>
+    <div style="text-align: center; padding-bottom: 5rem;">
+      <a href="/" style="color: #00e5ff; text-decoration: none;">← Volver al inicio</a>
+    </div>
 
     <script>
       import { createClient } from '@supabase/supabase-js';
       const supabase = createClient(import.meta.env.PUBLIC_SUPABASE_URL, import.meta.env.PUBLIC_SUPABASE_ANON_KEY);
 
-      const load = async () => {
-        const container = document.getElementById('grid');
+      const render = async () => {
+        const grid = document.getElementById('grid-container');
         const { data } = await supabase.from('entradas').select('*').order('created_at', { ascending: false });
-        if (container && data) {
-          container.innerHTML = '';
-          data.forEach(e => {
-            const div = document.createElement('div');
-            div.className = 'card';
-            div.style.display = 'flex';
-            div.style.flexDirection = 'column';
-            div.innerHTML = `
-              <h2 style="margin:0 0 1rem;">${e.title}</h2>
-              <p style="flex-grow:1; opacity:0.7;">${e.body}</p>
-              <div style="margin-top:1.5rem; display:flex; justify-content:space-between; align-items:center;">
-                <span style="font-size:0.8rem; color:#00e5ff;">${new Date(e.created_at).toLocaleDateString()}</span>
-                <button class="delete-btn" data-id="${e.id}">Eliminar</button>
-              </div>
-            `;
-            div.querySelector('.delete-btn')?.addEventListener('click', async () => {
-              if (confirm('¿Borrar?')) {
-                await supabase.from('entradas').delete().eq('id', e.id);
-                load();
+        if (grid && data) {
+          grid.innerHTML = data.map(p => `
+            <div class="glass-card">
+              <h2 style="margin:0 0 1rem; font-size:1.4rem;">${p.title}</h2>
+              <p style="flex-grow:1; color:#8cb9c8;">${p.body}</p>
+              <button class="btn-delete" data-id="${p.id}">Eliminar</button>
+            </div>
+          `).join('');
+
+          grid.querySelectorAll('.btn-delete').forEach(btn => {
+            btn.addEventListener('click', async () => {
+              if (confirm('¿Seguro?')) {
+                await supabase.from('entradas').delete().eq('id', btn.getAttribute('data-id'));
+                render();
               }
             });
-            container.appendChild(div);
           });
         }
       };
-      load();
+      render();
     </script>
   </body>
 </html>
