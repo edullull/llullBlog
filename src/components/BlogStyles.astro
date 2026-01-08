@@ -14,45 +14,45 @@
     color: var(--text-main);
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     margin: 0;
-    padding: 2rem;
+    padding: 1rem; /* Reducido para móviles */
   }
 
   .container {
     max-width: 1200px;
     margin: 0 auto;
+    padding: 1rem;
   }
 
   /* HEADER */
   .header {
     text-align: center;
-    margin-bottom: 4rem;
+    margin-bottom: 2.5rem;
   }
 
   .top-label {
     color: var(--accent-blue);
     font-weight: bold;
     letter-spacing: 2px;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     text-transform: uppercase;
-    margin-bottom: 0.5rem;
   }
 
   h1 {
-    font-size: 3.5rem;
+    font-size: 2.5rem; /* Ajustado para mejor respuesta */
     margin: 0.5rem 0;
     font-weight: 800;
   }
 
   .date {
     color: var(--text-muted);
-    font-size: 1rem;
+    font-size: 0.9rem;
   }
 
-  /* GRID PRINCIPAL: 50% / 50% */
+  /* GRID PRINCIPAL: 1fr 1fr en escritorio, 1fr en móvil */
   .main-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr; 
-    gap: 2.5rem;
+    grid-template-columns: 1fr; /* Por defecto 1 columna (móvil) */
+    gap: 2rem;
     align-items: start;
   }
 
@@ -61,12 +61,12 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
   }
 
   .section-title {
     color: var(--accent-blue);
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     letter-spacing: 1.5px;
     font-weight: bold;
     margin: 0;
@@ -76,97 +76,116 @@
   .view-all {
     color: var(--text-purple);
     text-decoration: none;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: bold;
     border: 1px solid var(--text-purple);
-    padding: 6px 14px;
-    border-radius: 10px;
-    transition: all 0.2s ease;
+    padding: 5px 12px;
+    border-radius: 8px;
   }
 
-  .view-all:hover {
-    background: var(--text-purple);
-    color: white;
-  }
-
-  /* ESTILO DE TARJETAS / CELDAS */
+  /* TARJETAS Y CELDAS */
   .blog-card {
     background-color: var(--card-bg);
-    border-radius: 20px;
+    border-radius: 18px;
     border: 1px solid var(--border-color);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
   }
 
-  /* Contenedor del formulario */
   .main-form-container {
-    padding: 2rem;
+    padding: 1.5rem;
   }
 
-  /* Lista de entradas (Recientes) */
   .entries-stack {
     display: flex;
     flex-direction: column;
-    gap: 1.2rem;
+    gap: 1rem;
   }
 
-  /* Celda individual de cada post */
   .entry-cell {
-    padding: 1.5rem;
-    transition: transform 0.2s ease, border-color 0.2s ease;
+    padding: 1.2rem;
   }
 
-  .entry-cell:hover {
-    transform: translateY(-3px);
-    border-color: var(--accent-blue);
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+    gap: 10px;
   }
 
   .entry-title {
-    margin: 0 0 0.5rem 0;
-    font-size: 1.25rem;
+    margin: 0;
+    font-size: 1.1rem;
     font-weight: 700;
+  }
+
+  .time-tag {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    white-space: nowrap;
   }
 
   .entry-content {
     color: var(--text-muted);
     margin: 0;
+    font-size: 0.95rem;
     line-height: 1.5;
   }
 
-  /* INPUTS Y FORMULARIO */
+  /* FORMULARIO */
   .form-layout {
     display: flex;
     flex-direction: column;
-    gap: 1.2rem;
+    gap: 1rem;
   }
 
   .input-field, .textarea-field {
     background: #0a1120;
     border: 1px solid #1e293b;
-    border-radius: 12px;
-    padding: 1rem;
+    border-radius: 10px;
+    padding: 0.8rem;
     color: white;
-    font-size: 1rem;
     width: 100%;
     box-sizing: border-box;
-    outline: none;
-  }
-
-  .input-field:focus, .textarea-field:focus {
-    border-color: var(--accent-blue);
+    font-size: 1rem;
   }
 
   .textarea-field {
-    min-height: 160px;
+    min-height: 120px;
     resize: none;
   }
 
-  /* BOTÓN PUBLICAR */
   .publish-button {
     background-color: var(--accent-blue);
     color: #000;
     border: none;
-    padding: 1.1rem;
-    border-radius: 14px;
+    padding: 1rem;
+    border-radius: 12px;
     font-weight: 800;
-    font-size: 1rem
+    cursor: pointer;
   }
+
+  /* --- MEDIA QUERY PARA ESCRITORIO --- */
+  @media (min-width: 900px) {
+    body {
+      padding: 2rem;
+    }
+    
+    h1 {
+      font-size: 3.5rem;
+    }
+
+    .main-grid {
+      grid-template-columns: 1fr 1fr; /* Aquí se activan las dos columnas iguales */
+      gap: 3rem;
+    }
+
+    .main-form-container {
+      padding: 2rem;
+    }
+
+    .entry-cell {
+      padding: 1.5rem;
+    }
+  }
+</style>
