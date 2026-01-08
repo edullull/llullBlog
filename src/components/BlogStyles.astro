@@ -1,249 +1,77 @@
 ---
-// Componente de estilos globales optimizado para móviles y escritorio
+// BlogStyles.astro: Solución definitiva al fondo blanco y estilos base
 ---
-
 <style is:global>
   :root {
-    --radius-home: 12px;
-    --radius-entradas: 16px;
-    --primary-cyan: #00c8ff;
-    --secondary-mint: #00ffc8;
-    --bg-dark: #02101c;
+    --primary-cyan: #00e5ff;
+    --glass-bg: rgba(10, 25, 41, 0.9);
+    --border-glass: rgba(0, 229, 255, 0.2);
   }
 
-  /* 1. RESET Y CONFIGURACIÓN BASE PARA MÓVILES */
-  * {
-    box-sizing: border-box; /* Evita que los paddings ensanchen los elementos */
-    -webkit-tap-highlight-color: transparent; /* Mejora la experiencia táctil en iPhone */
-  }
-
+  /* 1. BLINDAJE CONTRA FONDO BLANCO */
+  /* Aplicamos el color oscuro al HTML para que el "vaciado" del scroll sea negro */
   html {
-    background-color: var(--bg-dark); 
+    background-color: #030a12 !important;
     margin: 0;
     padding: 0;
-    min-height: 100%;
-    overflow-x: hidden;
+    height: 100%;
   }
 
   body {
+    /* El degradado ahora está anclado (fixed). No se desplaza con el scroll */
+    background: radial-gradient(circle at top right, #0a1e30, #030a12 80%) !important;
+    background-attachment: fixed !important;
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+    
     margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    background-attachment: fixed;
-    background-size: cover;
-    overflow-x: hidden;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: #f0faff;
+    min-height: 100vh;
     line-height: 1.6;
   }
 
-  /* 2. DISEÑO RESPONSIVO (MOBILE FIRST) */
-  body.home-page, body.entradas-page {
+  /* 2. ESTILOS DE CABECERA (Se mantienen coherentes) */
+  header {
+    padding: 4rem 1rem 2rem;
+    text-align: center;
+  }
+
+  header h1 {
+    font-size: clamp(2.5rem, 8vw, 4rem);
+    margin: 0;
+    color: #fff;
+    filter: drop-shadow(0 0 15px rgba(0, 229, 255, 0.2));
+  }
+
+  .date-badge {
+    color: var(--primary-cyan);
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 0.5rem;
+  }
+
+  /* 3. CONTENEDOR DE CENTRADO (Preparado para los siguientes pasos) */
+  main {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 1rem; /* Margen de seguridad en móviles */
-    color: #e8f6f9;
+    padding: 0 1.5rem 5rem;
   }
 
-  /* Fondos dinámicos */
-  body.home-page {
-    background: radial-gradient(circle at 25% 20%, #0a3d62 0, #021a2b 32%),
-      radial-gradient(circle at 80% 0%, #0b7fab 0, #021a2b 30%),
-      linear-gradient(135deg, #031420 0%, #061e2f 50%, #02101c 100%);
+  /* Clases de utilidad para las viñetas que usaremos luego */
+  .glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border-glass);
+    border-radius: 24px;
+    padding: 2.5rem;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
   }
 
-  body.entradas-page {
-    background: radial-gradient(circle at 20% 20%, #1a2a6c 0, #0f1629 30%),
-      radial-gradient(circle at 80% 0%, #4b0082 0, #0f1629 30%),
-      linear-gradient(135deg, #0f1629 0%, #1a1f35 50%, #0a0f1f 100%);
+  .muted {
+    color: #8cb9c8;
+    opacity: 0.7;
   }
-
-  /* 3. CONTENEDORES (VIÑETAS) ADAPTABLES */
-  header, section, footer, .entry-card {
-    width: 100% !important;
-    background: rgba(8, 24, 40, 0.8);
-    border: 1px solid rgba(0, 200, 255, 0.35);
-    backdrop-filter: blur(8px);
-    border-radius: var(--radius-home);
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    position: relative;
-    overflow: hidden;
-  }
-
-  /* Ajuste de títulos para que no se corten en el iPhone */
-  h1 {
-    font-size: clamp(1.8rem, 8vw, 2.6rem);
-    text-align: center;
-    color: #7be0ff;
-    text-shadow: 0 0 15px rgba(0, 200, 255, 0.4);
-    margin: 0;
-  }
-
-  h2 {
-    font-size: 1.2rem;
-    color: #e8f6f9;
-    text-transform: uppercase;
-    margin-bottom: 1rem;
-  }
-
-  /* 4. FORMULARIO CORREGIDO (SOLUCIÓN IPHONE) */
-  .entry-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.2rem;
-    width: 100%;
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    padding: 0;
-  }
-
-  .entry-form div {
-    width: 100%;
-  }
-
-  .entry-form label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: #a7f5ff;
-    font-weight: 600;
-  }
-
-  .entry-form input,
-  .entry-form textarea {
-    width: 100% !important; /* Fuerza el ancho total dentro de la viñeta */
-    max-width: 100%;
-    background: rgba(5, 24, 34, 0.9);
-    border: 1px solid rgba(0, 200, 255, 0.4);
-    color: #fff;
-    padding: 0.8rem;
-    border-radius: 8px;
-    /* 16px es el mínimo para evitar el zoom automático en iOS */
-    font-size: 16px; 
-    outline: none;
-  }
-
-  .entry-form button {
-    width: 100%;
-    background: linear-gradient(135deg, var(--primary-cyan), var(--secondary-mint));
-    color: #04121d;
-    border: none;
-    padding: 1rem;
-    border-radius: 10px;
-    font-weight: 700;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: transform 0.2s;
-  }
-
-  /* 5. GRID DE ENTRADAS */
-  main {
-    display: grid;
-    grid-template-columns: 1fr; /* Una columna en móviles */
-    gap: 1.5rem;
-  }
-
-  /* 6. MEDIA QUERIES PARA PANTALLAS GRANDES */
-  @media (min-width: 768px) {
-    body.home-page, body.entradas-page {
-      padding: 2.5rem 2rem;
-    }
-    
-    main {
-      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-      gap: 2rem;
-    }
-
-    header {
-      padding: 3rem;
-      margin-bottom: 2.5rem;
-    }
-  }
-
-  /* Compartidos y utilidades */
-  a { color: var(--primary-cyan); font-weight: 600; text-decoration: none; }
-  .muted { color: #8cb9c8; font-size: 0.9rem; }
-  .delete-btn {
-    background: rgba(255, 107, 107, 0.15);
-    color: #ff6b6b;
-    border: 1px solid #ff6b6b;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    cursor: pointer;
-    margin-top: 1rem;
-    width: 100%;
-  }
-  /* Contenedor de notificaciones */
-#toast-container {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-/* Estilo de la notificación */
-.toast {
-  padding: 1rem 1.5rem;
-  border-radius: 10px;
-  background: rgba(8, 24, 40, 0.95);
-  border: 1px solid rgba(0, 200, 255, 0.4);
-  color: white;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-  backdrop-filter: blur(10px);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  animation: slideIn 0.3s ease-out, fadeOut 0.5s ease-in 2.5s forwards;
-  min-width: 250px;
-}
-
-.toast.error { border-color: #ff6b6b; color: #ff6b6b; }
-.toast.success { border-color: #00ffc8; color: #00ffc8; }
-
-/* Animaciones */
-@keyframes slideIn {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
-
-@keyframes fadeOut {
-  from { opacity: 1; }
-  to { opacity: 0; transform: translateY(-10px); }
-}
-/* Estilos para el Estado Vacío (Punto 4) */
-.empty-state {
-  text-align: center;
-  padding: 4rem 2rem;
-  background: rgba(8, 24, 40, 0.3);
-  border: 2px dashed rgba(0, 200, 255, 0.2);
-  border-radius: var(--radius-home);
-  color: #9dd7e7;
-  grid-column: 1 / -1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  animation: fadeIn 0.5s ease-in;
-}
-
-.empty-icon {
-  font-size: 3.5rem;
-  filter: drop-shadow(0 0 15px rgba(0, 200, 255, 0.4));
-}
-
-.empty-state p {
-  font-size: 1.3rem;
-  font-weight: 600;
-  margin: 0;
-  color: #7be0ff;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
 </style>

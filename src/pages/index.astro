@@ -14,48 +14,53 @@ const hoy = new Date().toLocaleDateString('es-ES');
       type="image/svg+xml"
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect fill='%23031420' width='64' height='64'/><circle fill='%237be0ff' cx='32' cy='32' r='18'/><path fill='%23ffffff' d='M25 34l7-12 7 12h-14z'/></svg>"
     />
-    <title>Mi Blog Personal | LlullBlog</title>
+    <title>Mi Blog Personal | {nombre}</title>
     <BlogStyles />
   </head>
   <body class="home-page">
+    
     <header>
       <h1>¡Hola {nombre}!</h1>
-      <h2>Hoy es: {hoy}</h2>
+      <p class="date-badge">Hoy es: {hoy}</p>
     </header>
 
     <main>
-      <section class="home-new-entry">
-        <h2>Nueva entrada</h2>
-        <form id="new-entry-form" class="entry-form">
-          <div>
-            <label for="entry-title">Título</label>
-            <input id="entry-title" name="title" type="text" placeholder="Ej: Mi primer post" required />
-          </div>
-          <div>
-            <label for="entry-body">Contenido</label>
-            <textarea
-              id="entry-body"
-              name="body"
-              rows="4"
-              placeholder="Escribe aquí tu entrada..."
-              required
-            ></textarea>
-          </div>
-          <button type="submit" id="submit-btn">Guardar entrada</button>
-          <div id="entry-status" class="entry-status" aria-live="polite"></div>
-        </form>
-      </section>
+      <aside>
+        <section class="home-new-entry">
+          <h2 style="font-size: 0.9rem; color: var(--primary-cyan); margin-bottom: 1.5rem; letter-spacing: 1px;">NUEVA ENTRADA</h2>
+          <form id="new-entry-form" class="entry-form">
+            <div>
+              <input 
+                id="entry-title" 
+                name="title" 
+                type="text" 
+                placeholder="Título de la publicación" 
+                required 
+              />
+            </div>
+            <div>
+              <textarea
+                id="entry-body"
+                name="body"
+                rows="6"
+                placeholder="¿Qué tienes en mente?"
+                required
+              ></textarea>
+            </div>
+            <button type="submit" id="submit-btn">Publicar ahora</button>
+          </form>
+        </section>
+      </aside>
 
-      <section>
-        <h2>Mis entradas recientes (Nube)</h2>
-        <div id="custom-entries-list" class="entry-list" aria-live="polite">
-          <p class="muted">Cargando entradas desde Supabase...</p>
+      <section class="entries-feed" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding: 0 1rem;">
+          <h2 style="font-size: 1rem; color: #fff; margin: 0;">RECIENTES</h2>
+          <a href="/entradas" class="view-all">Ver todas →</a>
         </div>
-      </section>
-
-      <section>
-        <h2><a href="/entradas">Ver todas las entradas</a></h2>
-        <p>Accede al listado completo de publicaciones.</p>
+        
+        <div id="custom-entries-list">
+          <p class="muted" style="text-align: center;">Cargando tus pensamientos...</p>
+        </div>
       </section>
     </main>
 
@@ -67,12 +72,10 @@ const hoy = new Date().toLocaleDateString('es-ES');
       const supabase = createClient(supabaseUrl, supabaseKey);
     
       const form = document.getElementById('new-entry-form') as HTMLFormElement;
-      const titleEl = document.getElementById('entry-title') as HTMLInputElement;
-      const bodyEl = document.getElementById('entry-body') as HTMLTextAreaElement;
       const listEl = document.getElementById('custom-entries-list') as HTMLElement;
-      const submitBtn = form.querySelector('button') as HTMLButtonElement;
+      const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
     
-      // --- PUNTO 3: NOTIFICACIONES (TOASTS) ---
+      // Sistema de Notificaciones
       function showToast(message: string, type: 'success' | 'error' = 'success') {
         let container = document.getElementById('toast-container');
         if (!container) {
@@ -82,30 +85,37 @@ const hoy = new Date().toLocaleDateString('es-ES');
         }
         const toast = document.createElement('div');
         toast.className = `toast ${type}`;
-        toast.innerHTML = `<span>${type === 'success' ? '✅' : '❌'}</span><span>${message}</span>`;
+        toast.style.cssText = `
+          padding: 1rem 1.5rem;
+          background: #0a1e30;
+          border: 1px solid ${type === 'success' ? '#00e5ff' : '#ff6b6b'};
+          color: white;
+          border-radius: 10px;
+          margin-bottom: 10px;
+          box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+          animation: slideIn 0.3s ease-out;
+        `;
+        toast.innerHTML = `<span>${type === 'success' ? '✅' : '❌'}</span> ${message}`;
         container.appendChild(toast);
         setTimeout(() => toast.remove(), 3000);
       }
     
-      // --- PUNTO 2: TIEMPO RELATIVO (A PRUEBA DE VERCEL) ---
+      // Tiempo relativo compatible
       function getRelativeTime(dateInput: any) {
         if (!dateInput) return '';
         const date = new Date(dateInput).getTime();
         const now = new Date().getTime();
-        const diffInSeconds = Math.floor((now - date) / 1000);
+        const diff = Math.floor((now - date) / 1000);
         const rtf = new Intl.RelativeTimeFormat('es', { numeric: 'auto' });
     
-        if (diffInSeconds < 40) return 'hace un momento';
-        if (diffInSeconds < 3600) return rtf.format(-Math.floor(diffInSeconds / 60), 'minutes');
-        if (diffInSeconds < 86400) return rtf.format(-Math.floor(diffInSeconds / 3600), 'hours');
-        if (diffInSeconds < 604800) return rtf.format(-Math.floor(diffInSeconds / 86400), 'days');
-        return new Date(dateInput).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' });
+        if (diff < 60) return 'hace un momento';
+        if (diff < 3600) return rtf.format(-Math.floor(diff / 60), 'minutes');
+        if (diff < 86400) return rtf.format(-Math.floor(diff / 3600), 'hours');
+        return rtf.format(-Math.floor(diff / 86400), 'days');
       }
     
-      // --- PUNTO 4: RENDERIZADO CON ESTADO VACÍO ---
+      // Cargar entradas (Limitado a 5 para el feed lateral)
       const renderEntries = async () => {
-        listEl.innerHTML = '<p class="muted">Actualizando feed...</p>';
-        
         const { data: entries, error } = await supabase
           .from('entradas')
           .select('*')
@@ -113,54 +123,46 @@ const hoy = new Date().toLocaleDateString('es-ES');
           .limit(5);
     
         if (error) {
-          listEl.innerHTML = '<div class="empty-state"><p>Error al conectar con la base de datos</p></div>';
+          listEl.innerHTML = '<p class="muted">Error al conectar con la nube.</p>';
           return;
         }
     
-        // SI NO HAY ENTRADAS (ESTADO VACÍO)
         if (!entries || entries.length === 0) {
-          listEl.innerHTML = `
-            <div class="empty-state">
-              <div class="empty-icon">✍️</div>
-              <p>Tu diario está vacío</p>
-              <small>Escribe tu primera historia en el formulario de arriba.</small>
-            </div>
-          `;
+          listEl.innerHTML = '<p class="muted" style="text-align:center; padding: 2rem;">No hay entradas aún. ¡Escribe la primera!</p>';
           return;
         }
     
         listEl.innerHTML = '';
         entries.forEach((entry) => {
-          const card = document.createElement('article');
-          card.className = 'entry-card';
-          card.innerHTML = `
-            <h3>${entry.title}</h3>
-            <p>${entry.body}</p>
-            <p class="muted"><small>🕒 ${getRelativeTime(entry.created_at)}</small></p>
+          const article = document.createElement('article');
+          article.className = 'entry-card';
+          article.style.marginBottom = '1.5rem';
+          
+          article.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.8rem;">
+              <h3 style="margin: 0; font-size: 1.1rem; color: #fff;">${entry.title}</h3>
+              <span class="time-tag">${getRelativeTime(entry.created_at)}</span>
+            </div>
+            <p style="margin: 0; color: rgba(255,255,255,0.7); font-size: 0.95rem;">${entry.body}</p>
           `;
-          listEl.appendChild(card);
+          listEl.appendChild(article);
         });
       };
     
-      // --- PUNTO 1: ENVÍO CON ESTADO DE CARGA ---
+      // Evento de guardado
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const title = titleEl.value.trim();
-        const body = bodyEl.value.trim();
-    
-        if (!title || !body) {
-          showToast('Por favor, rellena todos los campos', 'error');
-          return;
-        }
+        const formData = new FormData(form);
+        const title = formData.get('title') as string;
+        const body = formData.get('body') as string;
     
         submitBtn.disabled = true;
-        const originalBtnText = submitBtn.innerText;
-        submitBtn.innerText = '🚀 Publicando...';
+        submitBtn.innerText = 'Publicando...';
     
         const { error } = await supabase.from('entradas').insert([{ title, body }]);
     
         if (error) {
-          showToast('Error: ' + error.message, 'error');
+          showToast('Error al publicar', 'error');
         } else {
           showToast('¡Entrada publicada con éxito!');
           form.reset();
@@ -168,7 +170,7 @@ const hoy = new Date().toLocaleDateString('es-ES');
         }
     
         submitBtn.disabled = false;
-        submitBtn.innerText = originalBtnText;
+        submitBtn.innerText = 'Publicar ahora';
       });
     
       renderEntries();
