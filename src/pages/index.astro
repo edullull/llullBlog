@@ -22,7 +22,7 @@ const hoy = new Date().toLocaleDateString('es-ES', {
     <title>Mi Blog Personal | LlullBlog</title>
     <BlogStyles />
   </head>
-  <body>
+  <body class="home-page">
     
     <main class="container">
       
@@ -41,18 +41,21 @@ const hoy = new Date().toLocaleDateString('es-ES', {
           
           <div class="blog-card main-form-container">
             <form id="new-entry-form" class="form-layout">
-              <div>
-                <input id="entry-title" name="title" type="text" placeholder="Título de la publicación" class="input-field" required />
-              </div>
-              <div>
-                <textarea
-                  id="entry-body"
-                  name="body"
-                  placeholder="¿Qué tienes en mente hoy?"
-                  class="textarea-field"
-                  required
-                ></textarea>
-              </div>
+              <input 
+                id="entry-title" 
+                name="title" 
+                type="text" 
+                placeholder="Título de la publicación" 
+                class="input-field" 
+                required 
+              />
+              <textarea
+                id="entry-body"
+                name="body"
+                placeholder="¿Qué tienes en mente hoy?"
+                class="textarea-field"
+                required
+              ></textarea>
               <button type="submit" id="submit-btn" class="publish-button">Publicar ahora</button>
             </form>
           </div>
@@ -60,7 +63,7 @@ const hoy = new Date().toLocaleDateString('es-ES', {
 
         <section class="column">
           <div class="section-header">
-            <h2 class="section-title">Recientes (Nube)</h2>
+            <h2 class="section-title">Mis entradas recientes (Nube)</h2>
             <a href="/entradas" class="view-all">VER TODAS</a>
           </div>
           
@@ -118,13 +121,13 @@ const hoy = new Date().toLocaleDateString('es-ES', {
     
         listEl.innerHTML = '';
         entries.forEach((entry) => {
-          // Creamos cada entrada como una CELDA individual con la clase 'blog-card'
           const card = document.createElement('article');
+          // 'blog-card' da el fondo y borde, 'entry-cell' el padding
           card.className = 'blog-card entry-cell'; 
           card.innerHTML = `
             <div class="card-top">
               <h3 class="entry-title">${entry.title}</h3>
-              <span class="time-tag" style="font-size: 0.7rem; color: #94a3b8;">${getRelativeTime(entry.created_at)}</span>
+              <span class="time-tag">${getRelativeTime(entry.created_at)}</span>
             </div>
             <p class="entry-content">${entry.body}</p>
           `;
@@ -136,6 +139,7 @@ const hoy = new Date().toLocaleDateString('es-ES', {
         e.preventDefault();
         const title = titleEl.value.trim();
         const body = bodyEl.value.trim();
+    
         if (!title || !body) return;
     
         submitBtn.disabled = true;
@@ -143,10 +147,13 @@ const hoy = new Date().toLocaleDateString('es-ES', {
     
         const { error } = await supabase.from('entradas').insert([{ title, body }]);
     
-        if (!error) {
+        if (error) {
+          console.error(error);
+        } else {
           form.reset();
           await renderEntries();
         }
+    
         submitBtn.disabled = false;
         submitBtn.innerText = 'Publicar ahora';
       });
@@ -155,88 +162,3 @@ const hoy = new Date().toLocaleDateString('es-ES', {
     </script>
   </body>
 </html>
-
-<style>
-  /* CSS para asegurar el diseño de dos columnas iguales */
-  :root {
-    --bg-color: #050a14;
-    --accent-blue: #00d4ff;
-    --text-muted: #94a3b8;
-  }
-
-  body {
-    background-color: var(--bg-color);
-    margin: 0;
-    color: white;
-    font-family: system-ui, sans-serif;
-  }
-
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem;
-  }
-
-  .header {
-    text-align: center;
-    margin-bottom: 3rem;
-  }
-
-  .top-label {
-    color: var(--accent-blue);
-    font-weight: bold;
-    letter-spacing: 2px;
-    font-size: 0.8rem;
-  }
-
-  /* EL GRID QUE QUERÍAS: 1fr 1fr */
-  .main-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
-    align-items: start;
-  }
-
-  .section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-  }
-
-  .section-title {
-    color: var(--accent-blue);
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-
-  /* Contenedor de las entradas (el stack de celdas) */
-  .entries-stack {
-    display: flex;
-    flex-direction: column;
-    gap: 1.2rem;
-  }
-
-  /* Estilos para que el JS sepa cómo pintar las celdas */
-  :global(.entry-cell) {
-    padding: 1.5rem;
-  }
-
-  :global(.entry-title) {
-    margin: 0 0 0.5rem 0;
-    font-size: 1.2rem;
-  }
-
-  :global(.entry-content) {
-    color: var(--text-muted);
-    margin: 0;
-    line-height: 1.5;
-  }
-
-  @media (max-width: 900px) {
-    .main-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-</style>
