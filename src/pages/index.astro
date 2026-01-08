@@ -20,9 +20,8 @@ const hoy = new Date().toLocaleDateString('es-ES');
   <body class="home-page">
     <header>
       <h1>¡Hola {nombre}!</h1>
-      <p>Bienvenido a tu blog personal construido con Astro</p>
+      <p>Bienvenido a tu blog personal conectado a Supabase</p>
       <h2>Hoy es: {hoy}</h2>
-
     </header>
 
     <main>
@@ -43,115 +42,98 @@ const hoy = new Date().toLocaleDateString('es-ES');
               required
             ></textarea>
           </div>
-          <button type="submit">Guardar entrada</button>
+          <button type="submit" id="submit-btn">Guardar entrada</button>
           <div id="entry-status" class="entry-status" aria-live="polite"></div>
-          
         </form>
       </section>
 
       <section>
-        <h2>Mis entradas</h2>
+        <h2>Mis entradas recientes (Nube)</h2>
         <div id="custom-entries-list" class="entry-list" aria-live="polite">
-          <p class="muted">No hay entradas personalizadas aún.</p>
+          <p class="muted">Cargando entradas desde Supabase...</p>
         </div>
       </section>
 
       <section>
-        <h2><a href="/entradas">Últimas entradas</a></h2>
-        <p>Próximamente estaré compartiendo mis ideas aquí...</p>
+        <h2><a href="/entradas">Ver todas las entradas</a></h2>
+        <p>Accede al listado completo de publicaciones.</p>
       </section>
-
+    </main>
 
     <script>
-      (() => {
-        type Entry = { title: string; body: string; date?: string };
-        const STORAGE_KEY = 'entradasPersonalizadas';
-        const form = document.getElementById('new-entry-form') as HTMLFormElement | null;
-        const titleEl = document.getElementById('entry-title') as HTMLInputElement | null;
-        const bodyEl = document.getElementById('entry-body') as HTMLTextAreaElement | null;
-        const statusEl = document.getElementById('entry-status') as HTMLElement | null;
-        const listEl = document.getElementById('custom-entries-list') as HTMLElement | null;
+      import { createClient } from '@supabase/supabase-js';
 
-        if (!form || !titleEl || !bodyEl || !statusEl || !listEl) return;
+      // 1. Configuración del cliente (usa tus variables de .env)
+      const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
+      const supabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+      const supabase = createClient(supabaseUrl, supabaseKey);
 
-        const escapeHtml = (str: string) =>
-          str
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#39;');
+      const form = document.getElementById('new-entry-form') as HTMLFormElement;
+      const titleEl = document.getElementById('entry-title') as HTMLInputElement;
+      const bodyEl = document.getElementById('entry-body') as HTMLTextAreaElement;
+      const statusEl = document.getElementById('entry-status') as HTMLElement;
+      const listEl = document.getElementById('custom-entries-list') as HTMLElement;
 
-        const loadEntries = (): Entry[] => {
-          try {
-            const stored = localStorage.getItem(STORAGE_KEY);
-            return stored ? (JSON.parse(stored) as Entry[]) : [];
-          } catch (e) {
-            return [];
-          }
-        };
+      // Función para cargar y mostrar entradas desde Supabase
+      const renderEntries = async () => {
+        listEl.innerHTML = '<p class="muted">Actualizando...</p>';
+        
+        const { data: entries, error } = await supabase
+          .from('entradas')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(5); // Solo mostramos las últimas 5 en la home
 
-        const saveEntries = (entries: Entry[]) =>
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+        if (error) {
+          listEl.innerHTML = '<p class="muted">Error al conectar con la base de datos.</p>';
+          return;
+        }
 
-        const renderEntries = () => {
-          const entries = loadEntries();
-          listEl.innerHTML = '';
-          if (!entries.length) {
-            listEl.innerHTML = '<p class="muted">No hay entradas personalizadas aún.</p>';
-            return;
-          }
-          entries.forEach(({ title, body, date }) => {
-            const card = document.createElement('article');
-            card.className = 'entry-card';
-            card.innerHTML = `
-              <h3>${escapeHtml(title)}</h3>
-              <p>${escapeHtml(body)}</p>
-              <p class="muted"><small>${escapeHtml(date ?? '')}</small></p>
-            `;
-            listEl.appendChild(card);
-          });
-        };
+        if (!entries || entries.length === 0) {
+          listEl.innerHTML = '<p class="muted">Aún no hay entradas en la nube.</p>';
+          return;
+        }
 
-        form.addEventListener('submit', (e) => {
-          e.preventDefault();
-          const title = titleEl.value.trim();
-          const body = bodyEl.value.trim();
-          if (!title || !body) {
-            statusEl.textContent = 'Completa el título y el contenido.';
-            return;
-          }
-          const entries = loadEntries();
-          const newEntry = {
-            title,
-            body,
-            date: new Date().toLocaleDateString('es-ES', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric'
-            })
-          };
-          entries.unshift(newEntry);
-          saveEntries(entries);
-          renderEntries();
-          statusEl.textContent = 'Entrada guardada localmente.';
+        listEl.innerHTML = '';
+        entries.forEach((entry) => {
+          const card = document.createElement('article');
+          card.className = 'entry-card';
+          card.innerHTML = `
+            <h3>${entry.title}</h3>
+            <p>${entry.body}</p>
+            <p class="muted"><small>${entry.date || new Date(entry.created_at).toLocaleDateString('es-ES')}</small></p>
+          `;
+          listEl.appendChild(card);
+        });
+      };
+
+      // Manejar el envío del formulario
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const title = titleEl.value.trim();
+        const body = bodyEl.value.trim();
+        const date = new Date().toLocaleDateString('es-ES');
+
+        statusEl.textContent = 'Enviando a la nube...';
+
+        // 2. Insertar en Supabase
+        const { error } = await supabase
+          .from('entradas')
+          .insert([{ title, body, date }]);
+
+        if (error) {
+          statusEl.textContent = 'Error al guardar: ' + error.message;
+          statusEl.style.color = '#ff6b6b';
+        } else {
+          statusEl.textContent = '¡Entrada guardada en la base de datos!';
+          statusEl.style.color = '#7be0ff';
           form.reset();
-          titleEl.focus();
-        });
-        const deleteAllBtn = document.createElement('button');
-        deleteAllBtn.textContent = 'Eliminar entradas';
-        deleteAllBtn.className = 'button';
-        deleteAllBtn.style.cssText = 'cursor: pointer; margin: 20px auto 0 auto; display: block; background: linear-gradient(135deg, #00c8ff, #00ffc8); border-radius: 10px; color: black; padding: 10px; margin-top: 20px; cursor: pointer; width: 50%;';
-        deleteAllBtn.addEventListener('click', () => {
-          if (confirm('¿Eliminar todas las entradas?')) {
-            localStorage.removeItem('entradasPersonalizadas');
-            renderEntries();
-          }
-        });
-        document.querySelector('section')?.appendChild(deleteAllBtn);
+          renderEntries(); // Recargamos la lista automáticamente
+        }
+      });
 
-        renderEntries();
-      })();
+      // Carga inicial
+      renderEntries();
     </script>
   </body>
 </html>

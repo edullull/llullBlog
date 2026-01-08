@@ -8,6 +8,24 @@
     --radius-entradas: 16px;
   }
 
+  /* 1. SOLUCIÓN DEFINITIVA AL FONDO BLANCO */
+  html {
+    /* Pintamos la base del navegador del color más oscuro */
+    background-color: #02101c; 
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    /* Esto permite que el fondo se vea en toda la pantalla */
+    background-attachment: fixed;
+    background-size: cover;
+  }
+
 
 
   /* Página de inicio */
@@ -73,12 +91,15 @@
 
   body.home-page main {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 1.6rem;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    row-gap: 3rem !important; /* Esto separa las filas específicamente */
+    gap: 3.5rem 2rem;
+    align-items: start; /* Evita que las cajas se estiren para tocarse */
   }
 
   body.home-page section {
     padding: 1.6rem;
+    margin-bottom: 1.5rem; /* Añade este espacio extra por debajo */
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
   }
 
@@ -119,9 +140,9 @@
   /* Página de entradas */
   body.entradas-page {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    max-width: 1100px;
+    max-width: 1000px;
     margin: 0 auto;
-    padding: 2.5rem 2rem 3.5rem;
+    padding: 3.5rem 3rem 3.5rem;
     line-height: 1.7;
     color: #e8ecf5;
     background: radial-gradient(circle at 20% 20%, #1a2a6c 0, #0f1629 30%),
@@ -138,6 +159,7 @@
       0 15px 40px rgba(0, 0, 0, 0.45),
       0 0 25px rgba(90, 125, 255, 0.22);
     backdrop-filter: blur(8px);
+    grid-column: span 1;
     border-radius: var(--radius-entradas);
     position: relative;
     overflow: hidden;
@@ -177,13 +199,15 @@
 
   body.entradas-page main {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 2.5rem 2rem;
+    align-items: start;
   }
 
   body.entradas-page section {
     padding: 1.75rem;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    gap: 3rem;
   }
 
   body.entradas-page section:hover {
@@ -200,6 +224,11 @@
     letter-spacing: 0.05em;
     text-transform: uppercase;
   }
+
+  body.entradas-page footer {
+  margin-top: 2rem; /* Esto empuja el footer hacia abajo */
+  padding: 2rem;
+}
 
   /* Compartidos */
   a {
@@ -229,7 +258,7 @@
   /* Formulario y listas de entradas personalizadas */
   .entry-form {
     display: grid;
-    gap: 0.9rem;
+    gap: 2rem;
     margin-top: 1rem;
     padding: 0.75rem 0.9rem 0.9rem;
     border-radius: 10px;
@@ -289,7 +318,7 @@
 
   .entry-list {
     display: grid;
-    gap: 1rem;
+    gap: 2rem;
   }
 
   .entry-card {
