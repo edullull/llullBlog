@@ -14,7 +14,6 @@ import BlogStyles from '../components/BlogStyles.astro';
     <title>Últimas Entradas | LlullBlog</title>
     <BlogStyles />
     <style>
-      /* Estilo extra para el botón de eliminar */
       .delete-btn {
         background: rgba(255, 107, 107, 0.2);
         color: #ff6b6b;
@@ -42,7 +41,7 @@ import BlogStyles from '../components/BlogStyles.astro';
     </main>
 
     <footer>
-      <p>
+      <p style="text-align: center; margin-top: 2rem;">
         <a href="/">← Volver al inicio</a>
       </p>
     </footer>
@@ -50,12 +49,26 @@ import BlogStyles from '../components/BlogStyles.astro';
     <script>
       import { createClient } from '@supabase/supabase-js';
 
-      // Configuración de Supabase
       const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
       const supabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
       const supabase = createClient(supabaseUrl, supabaseKey);
 
       const mainContainer = document.getElementById('main-container');
+
+      // --- FUNCIÓN DE TIEMPO RELATIVO (IGUAL QUE EN INDEX.ASTRO) ---
+      function getRelativeTime(dateInput: any) {
+        if (!dateInput) return '';
+        const date = new Date(dateInput).getTime();
+        const now = new Date().getTime();
+        const diffInSeconds = Math.floor((now - date) / 1000);
+        const rtf = new Intl.RelativeTimeFormat('es', { numeric: 'auto' });
+
+        if (diffInSeconds < 40) return 'hace un momento';
+        if (diffInSeconds < 3600) return rtf.format(-Math.floor(diffInSeconds / 60), 'minutes');
+        if (diffInSeconds < 86400) return rtf.format(-Math.floor(diffInSeconds / 3600), 'hours');
+        if (diffInSeconds < 604800) return rtf.format(-Math.floor(diffInSeconds / 86400), 'days');
+        return new Date(dateInput).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' });
+      }
 
       const renderEntries = async () => {
         if (!mainContainer) return;
@@ -78,16 +91,18 @@ import BlogStyles from '../components/BlogStyles.astro';
         mainContainer.innerHTML = '';
         entries.forEach((entry) => {
           const section = document.createElement('section');
-          const fecha = entry.date || new Date(entry.created_at).toLocaleDateString('es-ES');
+          section.className = 'entry-card'; // Mantenemos la clase para el estilo del blog
+          
+          // Usamos la función de tiempo relativo aquí
+          const tiempoRelativo = getRelativeTime(entry.created_at);
           
           section.innerHTML = `
             <h2>${entry.title}</h2>
             <p>${entry.body}</p>
-            <p><small>Publicado el: ${fecha}</small></p>
+            <p class="muted"><small>🕒 ${tiempoRelativo}</small></p>
             <button class="delete-btn" data-id="${entry.id}">Eliminar entrada</button>
           `;
           
-          // Evento para eliminar
           const btn = section.querySelector('.delete-btn');
           btn?.addEventListener('click', async () => {
             if (confirm('¿Seguro que quieres borrar esta entrada?')) {
@@ -97,7 +112,7 @@ import BlogStyles from '../components/BlogStyles.astro';
                 .eq('id', entry.id);
               
               if (!delError) {
-                renderEntries(); // Refrescar lista
+                renderEntries();
               } else {
                 alert('Error al borrar');
               }

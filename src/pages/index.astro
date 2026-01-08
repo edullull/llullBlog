@@ -72,46 +72,40 @@ const hoy = new Date().toLocaleDateString('es-ES');
       const listEl = document.getElementById('custom-entries-list') as HTMLElement;
       const submitBtn = form.querySelector('button') as HTMLButtonElement;
     
-      // --- FUNCIÓN PARA MOSTRAR TOASTS (PUNTO 3) ---
+      // --- PUNTO 3: NOTIFICACIONES (TOASTS) ---
       function showToast(message: string, type: 'success' | 'error' = 'success') {
-        // Crear contenedor si no existe
         let container = document.getElementById('toast-container');
         if (!container) {
           container = document.createElement('div');
           container.id = 'toast-container';
           document.body.appendChild(container);
         }
-    
         const toast = document.createElement('div');
         toast.className = `toast ${type}`;
-        toast.innerHTML = `
-          <span>${type === 'success' ? '✅' : '❌'}</span>
-          <span>${message}</span>
-        `;
-        
+        toast.innerHTML = `<span>${type === 'success' ? '✅' : '❌'}</span><span>${message}</span>`;
         container.appendChild(toast);
-    
-        // Eliminar del DOM después de que termine la animación
-        setTimeout(() => {
-          toast.remove();
-        }, 3000);
+        setTimeout(() => toast.remove(), 3000);
       }
     
-      function getRelativeTime(dateString: string) {
-        const date = new Date(dateString);
-        const now = new Date();
-        const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+      // --- PUNTO 2: TIEMPO RELATIVO (A PRUEBA DE VERCEL) ---
+      function getRelativeTime(dateInput: any) {
+        if (!dateInput) return '';
+        const date = new Date(dateInput).getTime();
+        const now = new Date().getTime();
+        const diffInSeconds = Math.floor((now - date) / 1000);
         const rtf = new Intl.RelativeTimeFormat('es', { numeric: 'auto' });
     
-        if (diffInSeconds < 60) return 'hace un momento';
+        if (diffInSeconds < 40) return 'hace un momento';
         if (diffInSeconds < 3600) return rtf.format(-Math.floor(diffInSeconds / 60), 'minutes');
         if (diffInSeconds < 86400) return rtf.format(-Math.floor(diffInSeconds / 3600), 'hours');
         if (diffInSeconds < 604800) return rtf.format(-Math.floor(diffInSeconds / 86400), 'days');
-        return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'long' });
+        return new Date(dateInput).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' });
       }
     
+      // --- PUNTO 4: RENDERIZADO CON ESTADO VACÍO ---
       const renderEntries = async () => {
         listEl.innerHTML = '<p class="muted">Actualizando feed...</p>';
+        
         const { data: entries, error } = await supabase
           .from('entradas')
           .select('*')
@@ -119,12 +113,24 @@ const hoy = new Date().toLocaleDateString('es-ES');
           .limit(5);
     
         if (error) {
-          listEl.innerHTML = '<p class="muted">Error al conectar.</p>';
+          listEl.innerHTML = '<div class="empty-state"><p>Error al conectar con la base de datos</p></div>';
+          return;
+        }
+    
+        // SI NO HAY ENTRADAS (ESTADO VACÍO)
+        if (!entries || entries.length === 0) {
+          listEl.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon">✍️</div>
+              <p>Tu diario está vacío</p>
+              <small>Escribe tu primera historia en el formulario de arriba.</small>
+            </div>
+          `;
           return;
         }
     
         listEl.innerHTML = '';
-        entries?.forEach((entry) => {
+        entries.forEach((entry) => {
           const card = document.createElement('article');
           card.className = 'entry-card';
           card.innerHTML = `
@@ -136,6 +142,7 @@ const hoy = new Date().toLocaleDateString('es-ES');
         });
       };
     
+      // --- PUNTO 1: ENVÍO CON ESTADO DE CARGA ---
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const title = titleEl.value.trim();
@@ -147,7 +154,7 @@ const hoy = new Date().toLocaleDateString('es-ES');
         }
     
         submitBtn.disabled = true;
-        const originalText = submitBtn.innerText;
+        const originalBtnText = submitBtn.innerText;
         submitBtn.innerText = '🚀 Publicando...';
     
         const { error } = await supabase.from('entradas').insert([{ title, body }]);
@@ -161,7 +168,7 @@ const hoy = new Date().toLocaleDateString('es-ES');
         }
     
         submitBtn.disabled = false;
-        submitBtn.innerText = originalText;
+        submitBtn.innerText = originalBtnText;
       });
     
       renderEntries();
