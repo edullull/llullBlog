@@ -1,343 +1,176 @@
 ---
-// Componente de estilos globales
+// Componente de estilos globales optimizado para móviles y escritorio
 ---
 
 <style is:global>
   :root {
     --radius-home: 12px;
     --radius-entradas: 16px;
+    --primary-cyan: #00c8ff;
+    --secondary-mint: #00ffc8;
+    --bg-dark: #02101c;
   }
 
-  /* 1. SOLUCIÓN DEFINITIVA AL FONDO BLANCO */
+  /* 1. RESET Y CONFIGURACIÓN BASE PARA MÓVILES */
+  * {
+    box-sizing: border-box; /* Evita que los paddings ensanchen los elementos */
+    -webkit-tap-highlight-color: transparent; /* Mejora la experiencia táctil en iPhone */
+  }
+
   html {
-    /* Pintamos la base del navegador del color más oscuro */
-    background-color: #02101c; 
+    background-color: var(--bg-dark); 
     margin: 0;
     padding: 0;
     min-height: 100%;
+    overflow-x: hidden;
   }
 
   body {
     margin: 0;
     padding: 0;
     min-height: 100vh;
-    /* Esto permite que el fondo se vea en toda la pantalla */
     background-attachment: fixed;
     background-size: cover;
+    overflow-x: hidden;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
   }
 
-
-
-  /* Página de inicio */
-  body.home-page {
-    --home-hero-height: 120px;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  /* 2. DISEÑO RESPONSIVO (MOBILE FIRST) */
+  body.home-page, body.entradas-page {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 2.5rem 2rem 3.5rem;
-    line-height: 1.7;
+    padding: 1rem; /* Margen de seguridad en móviles */
     color: #e8f6f9;
+  }
+
+  /* Fondos dinámicos */
+  body.home-page {
     background: radial-gradient(circle at 25% 20%, #0a3d62 0, #021a2b 32%),
       radial-gradient(circle at 80% 0%, #0b7fab 0, #021a2b 30%),
       linear-gradient(135deg, #031420 0%, #061e2f 50%, #02101c 100%);
   }
 
-  body.home-page header,
-  body.home-page section,
-  body.home-page footer {
-    background: rgba(8, 24, 40, 0.8);
-    border: 1px solid rgba(0, 200, 255, 0.35);
-    box-shadow:
-      0 14px 30px rgba(0, 0, 0, 0.4),
-      0 0 22px rgba(0, 200, 255, 0.18);
-    backdrop-filter: blur(8px);
-    border-radius: var(--radius-home);
-    position: relative;
-    overflow: hidden;
-  }
-
-  body.home-page header::after,
-  body.home-page section::after,
-  body.home-page footer::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: calc(var(--radius-home) - 2px);
-    pointer-events: none;
-  }
-
-  body.home-page header {
-    text-align: center;
-    margin-bottom: 2.2rem;
-    padding: 2.3rem 2rem;
-    min-height: var(--home-hero-height);
-  }
-
-  body.home-page h1 {
-    margin: 0;
-    font-size: 2.6rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: #7be0ff;
-    text-shadow: 0 0 18px rgba(0, 200, 255, 0.55);
-  }
-
-  body.home-page header p {
-    margin-top: 0.65rem;
-    color: #9dd7e7;
-    font-weight: 500;
-  }
-
-  body.home-page main {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    row-gap: 3rem !important; /* Esto separa las filas específicamente */
-    gap: 3.5rem 2rem;
-    align-items: start; /* Evita que las cajas se estiren para tocarse */
-  }
-
-  body.home-page section {
-    padding: 1.6rem;
-    margin-bottom: 1.5rem; /* Añade este espacio extra por debajo */
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
-  }
-
-  body.home-page .home-new-entry {
-    grid-column: 1 / -1;
-    min-height: var(--home-hero-height);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-
-  body.home-page section:hover {
-    transform: translateY(-5px);
-    box-shadow:
-      0 18px 40px rgba(0, 0, 0, 0.5),
-      0 0 22px rgba(0, 200, 255, 0.3);
-    border-color: rgba(0, 255, 200, 0.55);
-  }
-
-  body.home-page h2 {
-    margin: 0 0 0.45rem 0;
-    color: #e8f6f9;
-    font-size: 1.2rem;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
-
-  body.home-page h2 a {
-    color: #e8f6f9;
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-
-  body.home-page h2 a:hover {
-    color: #7be0ff;
-  }
-
-  /* Página de entradas */
   body.entradas-page {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 3.5rem 3rem 3.5rem;
-    line-height: 1.7;
-    color: #e8ecf5;
     background: radial-gradient(circle at 20% 20%, #1a2a6c 0, #0f1629 30%),
       radial-gradient(circle at 80% 0%, #4b0082 0, #0f1629 30%),
       linear-gradient(135deg, #0f1629 0%, #1a1f35 50%, #0a0f1f 100%);
   }
 
-  body.entradas-page header,
-  body.entradas-page section,
-  body.entradas-page footer {
-    background: rgba(18, 26, 46, 0.75);
-    border: 1px solid rgba(90, 125, 255, 0.35);
-    box-shadow:
-      0 15px 40px rgba(0, 0, 0, 0.45),
-      0 0 25px rgba(90, 125, 255, 0.22);
+  /* 3. CONTENEDORES (VIÑETAS) ADAPTABLES */
+  header, section, footer, .entry-card {
+    width: 100% !important;
+    background: rgba(8, 24, 40, 0.8);
+    border: 1px solid rgba(0, 200, 255, 0.35);
     backdrop-filter: blur(8px);
-    grid-column: span 1;
-    border-radius: var(--radius-entradas);
+    border-radius: var(--radius-home);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
     position: relative;
     overflow: hidden;
   }
 
-  body.entradas-page header::after,
-  body.entradas-page section::after,
-  body.entradas-page footer::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: calc(var(--radius-entradas) - 2px);
-    pointer-events: none;
-  }
-
-  body.entradas-page header {
+  /* Ajuste de títulos para que no se corten en el iPhone */
+  h1 {
+    font-size: clamp(1.8rem, 8vw, 2.6rem);
     text-align: center;
-    margin-bottom: 2.5rem;
-    padding: 2.5rem 2rem;
-  }
-
-  body.entradas-page h1 {
-    margin: 0;
-    font-size: 2.8rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: #b7c7ff;
-    text-shadow: 0 0 20px rgba(90, 125, 255, 0.65);
-  }
-
-  body.entradas-page header p {
-    margin-top: 0.75rem;
-    color: #8ea3d7;
-    font-weight: 500;
-  }
-
-  body.entradas-page main {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-    gap: 2.5rem 2rem;
-    align-items: start;
-  }
-
-  body.entradas-page section {
-    padding: 1.75rem;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    gap: 3rem;
-  }
-
-  body.entradas-page section:hover {
-    transform: translateY(-6px);
-    box-shadow:
-      0 20px 45px rgba(0, 0, 0, 0.55),
-      0 0 25px rgba(90, 125, 255, 0.35);
-  }
-
-  body.entradas-page h2 {
-    margin: 0 0 0.6rem 0;
-    color: #e2e8ff;
-    font-size: 1.25rem;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
-
-  body.entradas-page footer {
-  margin-top: 2rem; /* Esto empuja el footer hacia abajo */
-  padding: 2rem;
-}
-
-  /* Compartidos */
-  a {
     color: #7be0ff;
-    text-decoration: none;
-    font-weight: 600;
-    transition: color 0.2s;
+    text-shadow: 0 0 15px rgba(0, 200, 255, 0.4);
+    margin: 0;
   }
 
-  a:hover {
-    color: #c1f0ff;
+  h2 {
+    font-size: 1.2rem;
+    color: #e8f6f9;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
   }
 
-  p {
-    margin: 0.35rem 0 0.4rem;
-  }
-
-  small {
-    color: #8cb9c8;
-  }
-
-  footer {
-    text-align: center;
-    padding: 1.3rem;
-  }
-
-  /* Formulario y listas de entradas personalizadas */
+  /* 4. FORMULARIO CORREGIDO (SOLUCIÓN IPHONE) */
   .entry-form {
-    display: grid;
-    gap: 2rem;
-    margin-top: 1rem;
-    padding: 0.75rem 0.9rem 0.9rem;
-    border-radius: 10px;
-    background: rgba(2, 12, 20, 0.85);
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    width: 100%;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .entry-form div {
+    width: 100%;
   }
 
   .entry-form label {
     display: block;
-    font-weight: 600;
+    margin-bottom: 0.5rem;
     color: #a7f5ff;
+    font-weight: 600;
   }
 
   .entry-form input,
   .entry-form textarea {
-    width: 97%;
-    background: rgba(5, 24, 34, 0.85);
+    width: 100% !important; /* Fuerza el ancho total dentro de la viñeta */
+    max-width: 100%;
+    background: rgba(5, 24, 34, 0.9);
     border: 1px solid rgba(0, 200, 255, 0.4);
-    color: #e8f6f9;
-    padding: 0.75rem 0.9rem;
+    color: #fff;
+    padding: 0.8rem;
     border-radius: 8px;
-    font-size: 1rem;
+    /* 16px es el mínimo para evitar el zoom automático en iOS */
+    font-size: 16px; 
     outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-
-  .entry-form input:focus,
-  .entry-form textarea:focus {
-    border-color: rgba(0, 255, 200, 0.7);
-    box-shadow: 0 0 0 2px rgba(0, 255, 200, 0.15);
   }
 
   .entry-form button {
-    background: linear-gradient(135deg, #00c8ff, #00ffc8);
+    width: 100%;
+    background: linear-gradient(135deg, var(--primary-cyan), var(--secondary-mint));
     color: #04121d;
     border: none;
-    padding: 0.85rem 1rem;
+    padding: 1rem;
     border-radius: 10px;
     font-weight: 700;
+    font-size: 1rem;
     cursor: pointer;
-    transition: transform 0.15s ease, box-shadow 0.2s ease;
+    transition: transform 0.2s;
   }
 
-  .entry-form button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 24px rgba(0, 255, 200, 0.2);
-  }
-
-  .entry-form button:active {
-    transform: translateY(0);
-  }
-
-  .entry-status {
-    color: #a7f5ff;
-    font-size: 0.95rem;
-    min-height: 1.2rem;
-  }
-
-  .entry-list {
+  /* 5. GRID DE ENTRADAS */
+  main {
     display: grid;
-    gap: 2rem;
+    grid-template-columns: 1fr; /* Una columna en móviles */
+    gap: 1.5rem;
   }
 
-  .entry-card {
-    border: 1px solid rgba(0, 200, 255, 0.35);
-    border-radius: 10px;
-    padding: 1rem 1.1rem;
-    background: rgba(4, 18, 29, 0.7);
+  /* 6. MEDIA QUERIES PARA PANTALLAS GRANDES */
+  @media (min-width: 768px) {
+    body.home-page, body.entradas-page {
+      padding: 2.5rem 2rem;
+    }
+    
+    main {
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 2rem;
+    }
+
+    header {
+      padding: 3rem;
+      margin-bottom: 2.5rem;
+    }
   }
 
-  .entry-card h3 {
-    margin: 0 0 0.4rem 0;
-    color: #7be0ff;
-  }
-
-  .entry-card p {
-    margin: 0.2rem 0;
-  }
-
-  .muted {
-    color: #8cb9c8;
+  /* Compartidos y utilidades */
+  a { color: var(--primary-cyan); font-weight: 600; text-decoration: none; }
+  .muted { color: #8cb9c8; font-size: 0.9rem; }
+  .delete-btn {
+    background: rgba(255, 107, 107, 0.15);
+    color: #ff6b6b;
+    border: 1px solid #ff6b6b;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 1rem;
+    width: 100%;
   }
 </style>
