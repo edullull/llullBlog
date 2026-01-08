@@ -1,20 +1,25 @@
 ---
 const nombre = "Eduardo";
-const hoy = new Date().toLocaleDateString('es-ES');
+const tituloBlog = "TECH & LIFE BLOG"; 
+const hoy = new Date().toLocaleDateString('es-ES', { 
+  weekday: 'long', 
+  year: 'numeric', 
+  month: 'long', 
+  day: 'numeric' 
+});
 ---
 
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mi Blog Personal | {nombre}</title>
+    <title>{tituloBlog} | {nombre}</title>
     
     <style is:global>
-      /* RESET Y FONDO ORIGINAL */
       html, body {
         margin: 0;
         padding: 0;
-        background-color: #030a12 !important; /* El azul muy oscuro de tu captura */
+        background-color: #030a12 !important;
         color: #ffffff;
         font-family: 'Inter', system-ui, -apple-system, sans-serif;
         min-height: 100vh;
@@ -26,59 +31,76 @@ const hoy = new Date().toLocaleDateString('es-ES');
       }
 
       header {
-        padding: 3rem 1rem 1rem;
+        padding: 4rem 1rem 2rem;
         text-align: center;
       }
 
-      header h1 {
-        font-size: 3rem;
-        margin: 0;
-        font-weight: 800;
+      .blog-title {
+        font-size: 0.9rem;
+        color: #00e5ff;
+        letter-spacing: 4px;
+        font-weight: 900;
+        margin-bottom: 0.5rem;
+        display: block;
+        opacity: 0.8;
       }
 
-      /* LA ESTRUCTURA DE LA CAPTURA 1 */
+      header h1 {
+        font-size: clamp(2.5rem, 8vw, 4rem);
+        margin: 0;
+        font-weight: 800;
+        letter-spacing: -1px;
+      }
+
+      .date-text {
+        margin-top: 1rem;
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.9rem;
+        text-transform: capitalize;
+      }
+
       main {
         max-width: 1200px;
         margin: 0 auto;
-        padding: 2rem 1.5rem;
+        padding: 2rem 1.5rem 5rem;
         display: grid;
         grid-template-columns: 1fr;
-        gap: 2rem;
+        gap: 2.5rem;
       }
 
-      @media (min-width: 900px) {
+      @media (min-width: 950px) {
         main {
-          grid-template-columns: 1fr 1fr; /* Dos columnas reales */
+          grid-template-columns: 1.1fr 0.9fr;
+          align-items: start;
         }
       }
 
-      /* LAS CAJAS "GLASS" ORIGINALES */
       .glass-card {
         background: rgba(10, 25, 41, 0.7);
         backdrop-filter: blur(12px);
         border: 1px solid rgba(0, 229, 255, 0.15);
-        border-radius: 24px;
+        border-radius: 28px;
         padding: 2.5rem;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
       }
 
-      h2 {
-        font-size: 1.2rem;
-        letter-spacing: 1px;
-        margin-bottom: 2rem;
-        text-transform: uppercase;
+      .section-label {
+        font-size: 0.8rem;
+        letter-spacing: 2px;
+        color: #00e5ff;
         font-weight: 800;
+        margin-bottom: 2rem;
+        display: block;
       }
 
-      /* INPUTS Y BOTÓN DE LA PRIMERA FOTO */
       .entry-form input, .entry-form textarea {
         width: 100%;
         background: rgba(0, 0, 0, 0.3);
         border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
+        border-radius: 14px;
         padding: 1.2rem;
         color: #fff;
-        margin-bottom: 1rem;
+        margin-bottom: 1.2rem;
         font-size: 1rem;
         box-sizing: border-box;
       }
@@ -90,17 +112,13 @@ const hoy = new Date().toLocaleDateString('es-ES');
         font-weight: 800;
         padding: 1.2rem;
         border: none;
-        border-radius: 12px;
+        border-radius: 14px;
         cursor: pointer;
         font-size: 1rem;
-        transition: transform 0.2s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
       }
 
-      .btn-cyan:hover {
-        transform: scale(1.01);
-      }
-
-      /* LISTADO DE RECIENTES */
       .feed-entry {
         border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         padding: 1.5rem 0;
@@ -109,36 +127,39 @@ const hoy = new Date().toLocaleDateString('es-ES');
       .feed-entry p { margin: 0.5rem 0 0; color: #8cb9c8; }
       
       .link-view-all {
-        color: #a855f7; /* El color lila de tu captura */
-        text-decoration: underline;
-        font-size: 0.8rem;
-        font-weight: bold;
+        color: #a855f7;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 800;
+        border: 1px solid rgba(168, 85, 247, 0.3);
+        padding: 0.4rem 0.8rem;
+        border-radius: 8px;
       }
     </style>
   </head>
   <body>
     <header>
-      <p style="text-align: center; font-size: 0.9rem; opacity: 0.8;">Hoy es: {hoy}</p>
+      <span class="blog-title">{tituloBlog}</span>
+      <h1>¡Hola {nombre}!</h1>
+      <p class="date-text">{hoy}</p>
     </header>
 
     <main>
       <section class="glass-card">
-        <h2>NUEVA ENTRADA</h2>
+        <span class="section-label">NUEVA ENTRADA</span>
         <form id="post-form" class="entry-form">
           <input name="title" type="text" placeholder="Título de la publicación" required />
-          <textarea name="body" rows="6" placeholder="¿Qué tienes en mente?" required></textarea>
+          <textarea name="body" rows="6" placeholder="¿Qué tienes en mente hoy?" required></textarea>
           <button type="submit" class="btn-cyan">Publicar ahora</button>
         </form>
       </section>
 
       <section class="glass-card">
-        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1rem;">
-          <h2>RECIENTES</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+          <span class="section-label" style="margin: 0;">RECIENTES</span>
           <a href="/entradas" class="link-view-all">VER TODAS</a>
         </div>
-        <div id="posts-container">
-          <p>Cargando posts...</p>
-        </div>
+        <div id="posts-container"></div>
       </section>
     </main>
 
@@ -161,11 +182,29 @@ const hoy = new Date().toLocaleDateString('es-ES');
 
       document.getElementById('post-form')?.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const fd = new FormData(e.target as HTMLFormElement);
+        
+        // CORRECCIÓN DEL ERROR DE COMPILACIÓN:
+        const target = e.target as HTMLFormElement;
+        const btn = target.querySelector('button') as HTMLButtonElement;
+        
+        if (btn) {
+          btn.innerText = 'Publicando...';
+          btn.disabled = true;
+        }
+
+        const fd = new FormData(target);
         await supabase.from('entradas').insert([{ title: fd.get('title'), body: fd.get('body') }]);
-        (e.target as HTMLFormElement).reset();
+        
+        target.reset();
+        
+        if (btn) {
+          btn.innerText = 'Publicar ahora';
+          btn.disabled = false;
+        }
+        
         fetchPosts();
       });
+
       fetchPosts();
     </script>
   </body>
