@@ -1,192 +1,172 @@
----
-const nombre = "Eduardo";
-const hoy = new Date().toLocaleDateString('es-ES');
----
+<style is:global>
+  :root {
+    --bg-color: #050a14;
+    --card-bg: #0f172a;
+    --accent-blue: #00d4ff;
+    --text-main: #ffffff;
+    --text-muted: #94a3b8;
+    --text-purple: #a855f7;
+    --border-color: rgba(255, 255, 255, 0.1);
+  }
 
-<html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mi Blog | {nombre}</title>
-    
-    <style is:global>
-      :root {
-        --cyan: #00e5ff;
-        --bg-dark: #030a12;
-        --card-bg: rgba(10, 25, 41, 0.85);
-        --border: rgba(0, 229, 255, 0.2);
-      }
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    margin: 0;
+    padding: 2rem;
+  }
 
-      html, body {
-        margin: 0;
-        padding: 0;
-        background-color: var(--bg-dark) !important;
-        color: #f0faff;
-        font-family: 'Inter', system-ui, sans-serif;
-        min-height: 100vh;
-      }
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
 
-      body {
-        background: radial-gradient(circle at top right, #0a1e30, #030a12 80%) !important;
-        background-attachment: fixed !important;
-      }
+  /* HEADER */
+  .header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
 
-      header {
-        padding: 3rem 1rem;
-        text-align: center;
-      }
+  .top-label {
+    color: var(--accent-blue);
+    font-weight: bold;
+    letter-spacing: 2px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
 
-      header h1 {
-        font-size: 3.5rem;
-        margin: 0;
-        filter: drop-shadow(0 0 10px rgba(0, 229, 255, 0.3));
-      }
+  h1 {
+    font-size: 3.5rem;
+    margin: 0.5rem 0;
+    font-weight: 800;
+  }
 
-      /* EL CONTENEDOR QUE CENTRA TODO */
-      .main-layout {
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 0 1.5rem 5rem;
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 2.5rem;
-      }
+  .date {
+    color: var(--text-muted);
+    font-size: 1rem;
+  }
 
-      @media (min-width: 950px) {
-        .main-layout {
-          grid-template-columns: 1fr 1fr;
-          align-items: start;
-        }
-      }
+  /* GRID PRINCIPAL: 50% / 50% */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; 
+    gap: 2.5rem;
+    align-items: start;
+  }
 
-      /* LAS CAJAS TIPO CRISTAL */
-      .glass-box {
-        background: var(--card-bg);
-        backdrop-filter: blur(15px);
-        border: 1px solid var(--border);
-        border-radius: 20px;
-        padding: 2rem;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-      }
+  /* SECCIONES */
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
 
-      .label {
-        font-size: 0.8rem;
-        color: var(--cyan);
-        letter-spacing: 2px;
-        font-weight: bold;
-        margin-bottom: 1.5rem;
-        display: block;
-      }
+  .section-title {
+    color: var(--accent-blue);
+    font-size: 0.85rem;
+    letter-spacing: 1.5px;
+    font-weight: bold;
+    margin: 0;
+    text-transform: uppercase;
+  }
 
-      /* FORMULARIO ESTILIZADO */
-      .form-stack {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
+  .view-all {
+    color: var(--text-purple);
+    text-decoration: none;
+    font-size: 0.75rem;
+    font-weight: bold;
+    border: 1px solid var(--text-purple);
+    padding: 6px 14px;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+  }
 
-      .form-stack input, .form-stack textarea {
-        width: 100%;
-        background: rgba(0, 0, 0, 0.4);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
-        padding: 1rem;
-        color: #fff;
-        font-size: 1rem;
-        box-sizing: border-box;
-      }
+  .view-all:hover {
+    background: var(--text-purple);
+    color: white;
+  }
 
-      .form-stack input:focus, .form-stack textarea:focus {
-        border-color: var(--cyan);
-        outline: none;
-      }
+  /* ESTILO DE TARJETAS / CELDAS */
+  .blog-card {
+    background-color: var(--card-bg);
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  }
 
-      .btn-primary {
-        background: var(--cyan);
-        color: #000;
-        font-weight: 800;
-        padding: 1rem;
-        border: none;
-        border-radius: 12px;
-        cursor: pointer;
-        text-transform: uppercase;
-        transition: 0.2s;
-      }
+  /* Contenedor del formulario */
+  .main-form-container {
+    padding: 2rem;
+  }
 
-      .btn-primary:hover {
-        transform: scale(1.02);
-        box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
-      }
+  /* Lista de entradas (Recientes) */
+  .entries-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
 
-      /* LISTA DE RECIENTES */
-      .recent-item {
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        padding: 1rem 0;
-      }
-      .recent-item:last-child { border-bottom: none; }
-      .recent-item h3 { margin: 0; font-size: 1.1rem; }
-      .recent-item p { margin: 0.5rem 0 0; color: rgba(255,255,255,0.6); font-size: 0.9rem; }
+  /* Celda individual de cada post */
+  .entry-cell {
+    padding: 1.5rem;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
 
-      .btn-small {
-        color: #fff;
-        text-decoration: none;
-        font-size: 0.75rem;
-        border: 1px solid var(--border);
-        padding: 0.5rem 1rem;
-        border-radius: 8px;
-      }
-    </style>
-  </head>
-  <body>
-    <header>
-      <h1>¡Hola {nombre}!</h1>
-      <p style="color: var(--cyan); font-weight: 600;">Hoy es: {hoy}</p>
-    </header>
+  .entry-cell:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent-blue);
+  }
 
-    <main class="main-layout">
-      <section class="glass-box">
-        <span class="label">NUEVA ENTRADA</span>
-        <form id="blog-form" class="form-stack">
-          <input name="title" type="text" placeholder="Título de la publicación" required />
-          <textarea name="body" rows="5" placeholder="¿Qué tienes en mente?" required></textarea>
-          <button type="submit" class="btn-primary">Publicar ahora</button>
-        </form>
-      </section>
+  .entry-title {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
 
-      <section class="glass-box">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-          <span class="label" style="margin: 0;">RECIENTES</span>
-          <a href="/entradas" class="btn-small">VER TODAS</a>
-        </div>
-        <div id="feed"></div>
-      </section>
-    </main>
+  .entry-content {
+    color: var(--text-muted);
+    margin: 0;
+    line-height: 1.5;
+  }
 
-    <script>
-      import { createClient } from '@supabase/supabase-js';
-      const supabase = createClient(import.meta.env.PUBLIC_SUPABASE_URL, import.meta.env.PUBLIC_SUPABASE_ANON_KEY);
-      const feed = document.getElementById('feed');
+  /* INPUTS Y FORMULARIO */
+  .form-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
 
-      const load = async () => {
-        const { data } = await supabase.from('entradas').select('*').order('created_at', { ascending: false }).limit(5);
-        if (feed && data) {
-          feed.innerHTML = data.map(e => `
-            <div class="recent-item">
-              <h3>${e.title}</h3>
-              <p>${e.body}</p>
-            </div>
-          `).join('');
-        }
-      };
+  .input-field, .textarea-field {
+    background: #0a1120;
+    border: 1px solid #1e293b;
+    border-radius: 12px;
+    padding: 1rem;
+    color: white;
+    font-size: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+    outline: none;
+  }
 
-      document.getElementById('blog-form')?.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const fd = new FormData(e.target as HTMLFormElement);
-        await supabase.from('entradas').insert([{ title: fd.get('title'), body: fd.get('body') }]);
-        (e.target as HTMLFormElement).reset();
-        load();
-      });
-      load();
-    </script>
-  </body>
-</html>
+  .input-field:focus, .textarea-field:focus {
+    border-color: var(--accent-blue);
+  }
+
+  .textarea-field {
+    min-height: 160px;
+    resize: none;
+  }
+
+  /* BOTÓN PUBLICAR */
+  .publish-button {
+    background-color: var(--accent-blue);
+    color: #000;
+    border: none;
+    padding: 1.1rem;
+    border-radius: 14px;
+    font-weight: 800;
+    font-size: 1rem
+  }

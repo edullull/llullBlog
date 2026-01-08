@@ -1,6 +1,7 @@
 ---
+import BlogStyles from '../components/BlogStyles.astro';
+
 const nombre = "Eduardo";
-const tituloBlog = "TECH & LIFE BLOG"; 
 const hoy = new Date().toLocaleDateString('es-ES', { 
   weekday: 'long', 
   year: 'numeric', 
@@ -13,199 +14,229 @@ const hoy = new Date().toLocaleDateString('es-ES', {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{tituloBlog} | {nombre}</title>
-    
-    <style is:global>
-      html, body {
-        margin: 0;
-        padding: 0;
-        background-color: #030a12 !important;
-        color: #ffffff;
-        font-family: 'Inter', system-ui, -apple-system, sans-serif;
-        min-height: 100vh;
-      }
-
-      body {
-        background: radial-gradient(circle at top right, #0a1e30, #030a12 85%) !important;
-        background-attachment: fixed !important;
-      }
-
-      header {
-        padding: 4rem 1rem 2rem;
-        text-align: center;
-      }
-
-      .blog-title {
-        font-size: 0.9rem;
-        color: #00e5ff;
-        letter-spacing: 4px;
-        font-weight: 900;
-        margin-bottom: 0.5rem;
-        display: block;
-        opacity: 0.8;
-      }
-
-      header h1 {
-        font-size: clamp(2.5rem, 8vw, 4rem);
-        margin: 0;
-        font-weight: 800;
-        letter-spacing: -1px;
-      }
-
-      .date-text {
-        margin-top: 1rem;
-        color: rgba(255, 255, 255, 0.5);
-        font-size: 0.9rem;
-        text-transform: capitalize;
-      }
-
-      main {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 2rem 1.5rem 5rem;
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 2.5rem;
-      }
-
-      @media (min-width: 950px) {
-        main {
-          grid-template-columns: 1.1fr 0.9fr;
-          align-items: start;
-        }
-      }
-
-      .glass-card {
-        background: rgba(10, 25, 41, 0.7);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(0, 229, 255, 0.15);
-        border-radius: 28px;
-        padding: 2.5rem;
-        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
-      }
-
-      .section-label {
-        font-size: 0.8rem;
-        letter-spacing: 2px;
-        color: #00e5ff;
-        font-weight: 800;
-        margin-bottom: 2rem;
-        display: block;
-      }
-
-      .entry-form input, .entry-form textarea {
-        width: 100%;
-        background: rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 14px;
-        padding: 1.2rem;
-        color: #fff;
-        margin-bottom: 1.2rem;
-        font-size: 1rem;
-        box-sizing: border-box;
-      }
-
-      .btn-cyan {
-        width: 100%;
-        background: #00e5ff;
-        color: #000;
-        font-weight: 800;
-        padding: 1.2rem;
-        border: none;
-        border-radius: 14px;
-        cursor: pointer;
-        font-size: 1rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-      }
-
-      .feed-entry {
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        padding: 1.5rem 0;
-      }
-      .feed-entry h3 { margin: 0; font-size: 1.2rem; color: #fff; }
-      .feed-entry p { margin: 0.5rem 0 0; color: #8cb9c8; }
-      
-      .link-view-all {
-        color: #a855f7;
-        text-decoration: none;
-        font-size: 0.85rem;
-        font-weight: 800;
-        border: 1px solid rgba(168, 85, 247, 0.3);
-        padding: 0.4rem 0.8rem;
-        border-radius: 8px;
-      }
-    </style>
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect fill='%23031420' width='64' height='64'/><circle fill='%237be0ff' cx='32' cy='32' r='18'/><path fill='%23ffffff' d='M25 34l7-12 7 12h-14z'/></svg>"
+    />
+    <title>Mi Blog Personal | LlullBlog</title>
+    <BlogStyles />
   </head>
   <body>
-    <header>
-      <span class="blog-title">{tituloBlog}</span>
-      <h1>¡Hola {nombre}!</h1>
-      <p class="date-text">{hoy}</p>
-    </header>
+    
+    <main class="container">
+      
+      <header class="header">
+        <p class="top-label">TECH & LIFE BLOG</p>
+        <h1>¡Hola {nombre}!</h1>
+        <p class="date">{hoy}</p>
+      </header>
 
-    <main>
-      <section class="glass-card">
-        <span class="section-label">NUEVA ENTRADA</span>
-        <form id="post-form" class="entry-form">
-          <input name="title" type="text" placeholder="Título de la publicación" required />
-          <textarea name="body" rows="6" placeholder="¿Qué tienes en mente hoy?" required></textarea>
-          <button type="submit" class="btn-cyan">Publicar ahora</button>
-        </form>
-      </section>
+      <div class="main-grid">
+        
+        <section class="column">
+          <div class="section-header">
+            <h2 class="section-title">Nueva entrada</h2>
+          </div>
+          
+          <div class="blog-card main-form-container">
+            <form id="new-entry-form" class="form-layout">
+              <div>
+                <input id="entry-title" name="title" type="text" placeholder="Título de la publicación" class="input-field" required />
+              </div>
+              <div>
+                <textarea
+                  id="entry-body"
+                  name="body"
+                  placeholder="¿Qué tienes en mente hoy?"
+                  class="textarea-field"
+                  required
+                ></textarea>
+              </div>
+              <button type="submit" id="submit-btn" class="publish-button">Publicar ahora</button>
+            </form>
+          </div>
+        </section>
 
-      <section class="glass-card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-          <span class="section-label" style="margin: 0;">RECIENTES</span>
-          <a href="/entradas" class="link-view-all">VER TODAS</a>
-        </div>
-        <div id="posts-container"></div>
-      </section>
+        <section class="column">
+          <div class="section-header">
+            <h2 class="section-title">Recientes (Nube)</h2>
+            <a href="/entradas" class="view-all">VER TODAS</a>
+          </div>
+          
+          <div id="custom-entries-list" class="entries-stack">
+            <p class="muted">Cargando feed desde Supabase...</p>
+          </div>
+        </section>
+
+      </div>
     </main>
 
     <script>
       import { createClient } from '@supabase/supabase-js';
-      const supabase = createClient(import.meta.env.PUBLIC_SUPABASE_URL, import.meta.env.PUBLIC_SUPABASE_ANON_KEY);
-      const container = document.getElementById('posts-container');
-
-      const fetchPosts = async () => {
-        const { data } = await supabase.from('entradas').select('*').order('created_at', { ascending: false }).limit(5);
-        if (container && data) {
-          container.innerHTML = data.map(p => `
-            <div class="feed-entry">
-              <h3>${p.title}</h3>
-              <p>${p.body}</p>
+    
+      const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
+      const supabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+      const supabase = createClient(supabaseUrl, supabaseKey);
+    
+      const form = document.getElementById('new-entry-form') as HTMLFormElement;
+      const titleEl = document.getElementById('entry-title') as HTMLInputElement;
+      const bodyEl = document.getElementById('entry-body') as HTMLTextAreaElement;
+      const listEl = document.getElementById('custom-entries-list') as HTMLElement;
+      const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+    
+      function getRelativeTime(dateInput: any) {
+        if (!dateInput) return '';
+        const date = new Date(dateInput).getTime();
+        const now = new Date().getTime();
+        const diffInSeconds = Math.floor((now - date) / 1000);
+        const rtf = new Intl.RelativeTimeFormat('es', { numeric: 'auto' });
+    
+        if (diffInSeconds < 40) return 'hace un momento';
+        if (diffInSeconds < 3600) return rtf.format(-Math.floor(diffInSeconds / 60), 'minutes');
+        if (diffInSeconds < 86400) return rtf.format(-Math.floor(diffInSeconds / 3600), 'hours');
+        if (diffInSeconds < 604800) return rtf.format(-Math.floor(diffInSeconds / 86400), 'days');
+        return new Date(dateInput).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' });
+      }
+    
+      const renderEntries = async () => {
+        const { data: entries, error } = await supabase
+          .from('entradas')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(5);
+    
+        if (error) {
+          listEl.innerHTML = '<p class="muted">Error de conexión.</p>';
+          return;
+        }
+    
+        if (!entries || entries.length === 0) {
+          listEl.innerHTML = '<div class="blog-card entry-cell"><p>Diario vacío</p></div>';
+          return;
+        }
+    
+        listEl.innerHTML = '';
+        entries.forEach((entry) => {
+          // Creamos cada entrada como una CELDA individual con la clase 'blog-card'
+          const card = document.createElement('article');
+          card.className = 'blog-card entry-cell'; 
+          card.innerHTML = `
+            <div class="card-top">
+              <h3 class="entry-title">${entry.title}</h3>
+              <span class="time-tag" style="font-size: 0.7rem; color: #94a3b8;">${getRelativeTime(entry.created_at)}</span>
             </div>
-          `).join('');
-        }
+            <p class="entry-content">${entry.body}</p>
+          `;
+          listEl.appendChild(card);
+        });
       };
-
-      document.getElementById('post-form')?.addEventListener('submit', async (e) => {
+    
+      form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
-        // CORRECCIÓN DEL ERROR DE COMPILACIÓN:
-        const target = e.target as HTMLFormElement;
-        const btn = target.querySelector('button') as HTMLButtonElement;
-        
-        if (btn) {
-          btn.innerText = 'Publicando...';
-          btn.disabled = true;
+        const title = titleEl.value.trim();
+        const body = bodyEl.value.trim();
+        if (!title || !body) return;
+    
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'Publicando...';
+    
+        const { error } = await supabase.from('entradas').insert([{ title, body }]);
+    
+        if (!error) {
+          form.reset();
+          await renderEntries();
         }
-
-        const fd = new FormData(target);
-        await supabase.from('entradas').insert([{ title: fd.get('title'), body: fd.get('body') }]);
-        
-        target.reset();
-        
-        if (btn) {
-          btn.innerText = 'Publicar ahora';
-          btn.disabled = false;
-        }
-        
-        fetchPosts();
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Publicar ahora';
       });
-
-      fetchPosts();
+    
+      renderEntries();
     </script>
   </body>
 </html>
+
+<style>
+  /* CSS para asegurar el diseño de dos columnas iguales */
+  :root {
+    --bg-color: #050a14;
+    --accent-blue: #00d4ff;
+    --text-muted: #94a3b8;
+  }
+
+  body {
+    background-color: var(--bg-color);
+    margin: 0;
+    color: white;
+    font-family: system-ui, sans-serif;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .top-label {
+    color: var(--accent-blue);
+    font-weight: bold;
+    letter-spacing: 2px;
+    font-size: 0.8rem;
+  }
+
+  /* EL GRID QUE QUERÍAS: 1fr 1fr */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .section-title {
+    color: var(--accent-blue);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* Contenedor de las entradas (el stack de celdas) */
+  .entries-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  /* Estilos para que el JS sepa cómo pintar las celdas */
+  :global(.entry-cell) {
+    padding: 1.5rem;
+  }
+
+  :global(.entry-title) {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.2rem;
+  }
+
+  :global(.entry-content) {
+    color: var(--text-muted);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 900px) {
+    .main-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
