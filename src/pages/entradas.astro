@@ -6,120 +6,54 @@ import BlogStyles from '../components/BlogStyles.astro';
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="icon"
-      type="image/svg+xml"
-      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect fill='%230f1629' width='64' height='64'/><circle fill='%2399b4ff' cx='32' cy='32' r='18'/><path fill='%23ffffff' d='M25 34l7-12 7 12h-14z'/></svg>"
-    />
-    <title>Últimas Entradas | LlullBlog</title>
+    <title>Entradas</title>
     <BlogStyles />
-    <style>
-      .delete-btn {
-        background: rgba(255, 107, 107, 0.2);
-        color: #ff6b6b;
-        border: 1px solid rgba(255, 107, 107, 0.4);
-        padding: 5px 12px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 0.8rem;
-        margin-top: 1rem;
-        transition: all 0.2s;
-      }
-      .delete-btn:hover {
-        background: #ff6b6b;
-        color: white;
-      }
-    </style>
   </head>
   <body class="entradas-page">
     <header>
       <h1>Últimas Entradas</h1>
     </header>
 
-    <main id="main-container">
-      <p class="muted" style="text-align: center;">Cargando entradas...</p>
-    </main>
+    <main id="grid" class="main-container">
+      </main>
 
-    <footer>
-      <p style="text-align: center; margin-top: 2rem;">
-        <a href="/">← Volver al inicio</a>
-      </p>
+    <footer style="text-align: center; padding: 4rem;">
+      <a href="/" class="btn-link">← VOLVER AL INICIO</a>
     </footer>
 
     <script>
       import { createClient } from '@supabase/supabase-js';
-    
-      const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
-      const supabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
-      const supabase = createClient(supabaseUrl, supabaseKey);
-    
-      // Añadimos ": any" para que el compilador no dé error
-      const getRelativeTime = (dateInput: any) => {
-        if (!dateInput) return '';
-        
-        // Convertimos a número (milisegundos) para comparar
-        const date = new Date(dateInput).getTime();
-        const now = new Date().getTime();
-        
-        // Calculamos la diferencia
-        const diffInSeconds = Math.floor((now - date) / 1000);
-        const rtf = new Intl.RelativeTimeFormat('es', { numeric: 'auto' });
-    
-        if (diffInSeconds < 40) return 'hace un momento';
-        if (diffInSeconds < 3600) return rtf.format(-Math.floor(diffInSeconds / 60), 'minutes');
-        if (diffInSeconds < 86400) return rtf.format(-Math.floor(diffInSeconds / 3600), 'hours');
-        if (diffInSeconds < 604800) return rtf.format(-Math.floor(diffInSeconds / 86400), 'days');
-        
-        return new Date(dateInput).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' });
-      };
-    
-      const renderEntries = async () => {
-        const container = document.getElementById('main-container');
-        if (!container) return;
-    
-        const { data: entries, error } = await supabase
-          .from('entradas')
-          .select('*')
-          .order('created_at', { ascending: false });
-    
-        if (error) {
-          container.innerHTML = '<p class="muted">Error al cargar datos.</p>';
-          return;
-        }
-    
-        if (!entries || entries.length === 0) {
-          container.innerHTML = '<p class="muted" style="text-align:center;">No hay entradas todavía.</p>';
-          return;
-        }
-    
-        container.innerHTML = '';
-        entries.forEach((entry) => {
-          const section = document.createElement('section');
-          section.className = 'entry-card';
-          
-          // Llamamos a la función con la columna correcta
-          const timeLabel = getRelativeTime(entry.created_at);
-          
-          section.innerHTML = `
-            <h2>${entry.title}</h2>
-            <p>${entry.body}</p>
-            <p class="muted"><small>🕒 ${timeLabel}</small></p>
-            <button class="delete-btn" data-id="${entry.id}">Eliminar entrada</button>
-          `;
-          
-          section.querySelector('.delete-btn')?.addEventListener('click', async () => {
-            if (confirm('¿Seguro que quieres borrar esta entrada?')) {
-              const { error: delError } = await supabase.from('entradas').delete().eq('id', entry.id);
-              if (!delError) renderEntries();
-              else alert('Error al borrar');
-            }
+      const supabase = createClient(import.meta.env.PUBLIC_SUPABASE_URL, import.meta.env.PUBLIC_SUPABASE_ANON_KEY);
+
+      const load = async () => {
+        const container = document.getElementById('grid');
+        const { data } = await supabase.from('entradas').select('*').order('created_at', { ascending: false });
+        if (container && data) {
+          container.innerHTML = '';
+          data.forEach(e => {
+            const div = document.createElement('div');
+            div.className = 'card';
+            div.style.display = 'flex';
+            div.style.flexDirection = 'column';
+            div.innerHTML = `
+              <h2 style="margin:0 0 1rem;">${e.title}</h2>
+              <p style="flex-grow:1; opacity:0.7;">${e.body}</p>
+              <div style="margin-top:1.5rem; display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:0.8rem; color:#00e5ff;">${new Date(e.created_at).toLocaleDateString()}</span>
+                <button class="delete-btn" data-id="${e.id}">Eliminar</button>
+              </div>
+            `;
+            div.querySelector('.delete-btn')?.addEventListener('click', async () => {
+              if (confirm('¿Borrar?')) {
+                await supabase.from('entradas').delete().eq('id', e.id);
+                load();
+              }
+            });
+            container.appendChild(div);
           });
-    
-          container.appendChild(section);
-        });
+        }
       };
-    
-      renderEntries();
+      load();
     </script>
   </body>
 </html>
