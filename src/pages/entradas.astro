@@ -48,81 +48,77 @@ import BlogStyles from '../components/BlogStyles.astro';
 
     <script>
       import { createClient } from '@supabase/supabase-js';
-
+    
       const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
       const supabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
       const supabase = createClient(supabaseUrl, supabaseKey);
-
-      const mainContainer = document.getElementById('main-container');
-
-      // --- FUNCIÓN DE TIEMPO RELATIVO (IGUAL QUE EN INDEX.ASTRO) ---
-      function getRelativeTime(dateInput: any) {
+    
+      // Añadimos ": any" para que el compilador no dé error
+      const getRelativeTime = (dateInput: any) => {
         if (!dateInput) return '';
+        
+        // Convertimos a número (milisegundos) para comparar
         const date = new Date(dateInput).getTime();
         const now = new Date().getTime();
+        
+        // Calculamos la diferencia
         const diffInSeconds = Math.floor((now - date) / 1000);
         const rtf = new Intl.RelativeTimeFormat('es', { numeric: 'auto' });
-
+    
         if (diffInSeconds < 40) return 'hace un momento';
         if (diffInSeconds < 3600) return rtf.format(-Math.floor(diffInSeconds / 60), 'minutes');
         if (diffInSeconds < 86400) return rtf.format(-Math.floor(diffInSeconds / 3600), 'hours');
         if (diffInSeconds < 604800) return rtf.format(-Math.floor(diffInSeconds / 86400), 'days');
+        
         return new Date(dateInput).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' });
-      }
-
+      };
+    
       const renderEntries = async () => {
-        if (!mainContainer) return;
-
+        const container = document.getElementById('main-container');
+        if (!container) return;
+    
         const { data: entries, error } = await supabase
           .from('entradas')
           .select('*')
           .order('created_at', { ascending: false });
-
+    
         if (error) {
-          mainContainer.innerHTML = '<p class="muted">Error al cargar datos.</p>';
+          container.innerHTML = '<p class="muted">Error al cargar datos.</p>';
           return;
         }
-
+    
         if (!entries || entries.length === 0) {
-          mainContainer.innerHTML = '<p class="muted">No hay entradas publicadas todavía.</p>';
+          container.innerHTML = '<p class="muted" style="text-align:center;">No hay entradas todavía.</p>';
           return;
         }
-
-        mainContainer.innerHTML = '';
+    
+        container.innerHTML = '';
         entries.forEach((entry) => {
           const section = document.createElement('section');
-          section.className = 'entry-card'; // Mantenemos la clase para el estilo del blog
+          section.className = 'entry-card';
           
-          // Usamos la función de tiempo relativo aquí
-          const tiempoRelativo = getRelativeTime(entry.created_at);
+          // Llamamos a la función con la columna correcta
+          const timeLabel = getRelativeTime(entry.created_at);
           
           section.innerHTML = `
             <h2>${entry.title}</h2>
             <p>${entry.body}</p>
-            <p class="muted"><small>🕒 ${tiempoRelativo}</small></p>
+            <p class="muted"><small>🕒 ${timeLabel}</small></p>
             <button class="delete-btn" data-id="${entry.id}">Eliminar entrada</button>
           `;
           
-          const btn = section.querySelector('.delete-btn');
-          btn?.addEventListener('click', async () => {
+          section.querySelector('.delete-btn')?.addEventListener('click', async () => {
             if (confirm('¿Seguro que quieres borrar esta entrada?')) {
-              const { error: delError } = await supabase
-                .from('entradas')
-                .delete()
-                .eq('id', entry.id);
-              
-              if (!delError) {
-                renderEntries();
-              } else {
-                alert('Error al borrar');
-              }
+              const { error: delError } = await supabase.from('entradas').delete().eq('id', entry.id);
+              if (!delError) renderEntries();
+              else alert('Error al borrar');
             }
           });
-
-          mainContainer.appendChild(section);
+    
+          container.appendChild(section);
         });
       };
-
+    
       renderEntries();
     </script>
   </body>
