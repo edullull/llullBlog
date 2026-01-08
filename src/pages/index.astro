@@ -20,7 +20,6 @@ const hoy = new Date().toLocaleDateString('es-ES');
   <body class="home-page">
     <header>
       <h1>¡Hola {nombre}!</h1>
-      <p>Bienvenido a tu blog personal conectado a Supabase</p>
       <h2>Hoy es: {hoy}</h2>
     </header>
 
@@ -62,77 +61,109 @@ const hoy = new Date().toLocaleDateString('es-ES');
 
     <script>
       import { createClient } from '@supabase/supabase-js';
-
-      // 1. Configuración del cliente (usa tus variables de .env)
+    
       const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
       const supabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
       const supabase = createClient(supabaseUrl, supabaseKey);
-
+    
       const form = document.getElementById('new-entry-form') as HTMLFormElement;
       const titleEl = document.getElementById('entry-title') as HTMLInputElement;
       const bodyEl = document.getElementById('entry-body') as HTMLTextAreaElement;
-      const statusEl = document.getElementById('entry-status') as HTMLElement;
       const listEl = document.getElementById('custom-entries-list') as HTMLElement;
-
-      // Función para cargar y mostrar entradas desde Supabase
-      const renderEntries = async () => {
-        listEl.innerHTML = '<p class="muted">Actualizando...</p>';
+      const submitBtn = form.querySelector('button') as HTMLButtonElement;
+    
+      // --- FUNCIÓN PARA MOSTRAR TOASTS (PUNTO 3) ---
+      function showToast(message: string, type: 'success' | 'error' = 'success') {
+        // Crear contenedor si no existe
+        let container = document.getElementById('toast-container');
+        if (!container) {
+          container = document.createElement('div');
+          container.id = 'toast-container';
+          document.body.appendChild(container);
+        }
+    
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `
+          <span>${type === 'success' ? '✅' : '❌'}</span>
+          <span>${message}</span>
+        `;
         
+        container.appendChild(toast);
+    
+        // Eliminar del DOM después de que termine la animación
+        setTimeout(() => {
+          toast.remove();
+        }, 3000);
+      }
+    
+      function getRelativeTime(dateString: string) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+        const rtf = new Intl.RelativeTimeFormat('es', { numeric: 'auto' });
+    
+        if (diffInSeconds < 60) return 'hace un momento';
+        if (diffInSeconds < 3600) return rtf.format(-Math.floor(diffInSeconds / 60), 'minutes');
+        if (diffInSeconds < 86400) return rtf.format(-Math.floor(diffInSeconds / 3600), 'hours');
+        if (diffInSeconds < 604800) return rtf.format(-Math.floor(diffInSeconds / 86400), 'days');
+        return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'long' });
+      }
+    
+      const renderEntries = async () => {
+        listEl.innerHTML = '<p class="muted">Actualizando feed...</p>';
         const { data: entries, error } = await supabase
           .from('entradas')
           .select('*')
           .order('created_at', { ascending: false })
-          .limit(5); // Solo mostramos las últimas 5 en la home
-
+          .limit(5);
+    
         if (error) {
-          listEl.innerHTML = '<p class="muted">Error al conectar con la base de datos.</p>';
+          listEl.innerHTML = '<p class="muted">Error al conectar.</p>';
           return;
         }
-
-        if (!entries || entries.length === 0) {
-          listEl.innerHTML = '<p class="muted">Aún no hay entradas en la nube.</p>';
-          return;
-        }
-
+    
         listEl.innerHTML = '';
-        entries.forEach((entry) => {
+        entries?.forEach((entry) => {
           const card = document.createElement('article');
           card.className = 'entry-card';
           card.innerHTML = `
             <h3>${entry.title}</h3>
             <p>${entry.body}</p>
-            <p class="muted"><small>${entry.date || new Date(entry.created_at).toLocaleDateString('es-ES')}</small></p>
+            <p class="muted"><small>🕒 ${getRelativeTime(entry.created_at)}</small></p>
           `;
           listEl.appendChild(card);
         });
       };
-
-      // Manejar el envío del formulario
+    
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const title = titleEl.value.trim();
         const body = bodyEl.value.trim();
-        const date = new Date().toLocaleDateString('es-ES');
-
-        statusEl.textContent = 'Enviando a la nube...';
-
-        // 2. Insertar en Supabase
-        const { error } = await supabase
-          .from('entradas')
-          .insert([{ title, body, date }]);
-
-        if (error) {
-          statusEl.textContent = 'Error al guardar: ' + error.message;
-          statusEl.style.color = '#ff6b6b';
-        } else {
-          statusEl.textContent = '¡Entrada guardada en la base de datos!';
-          statusEl.style.color = '#7be0ff';
-          form.reset();
-          renderEntries(); // Recargamos la lista automáticamente
+    
+        if (!title || !body) {
+          showToast('Por favor, rellena todos los campos', 'error');
+          return;
         }
+    
+        submitBtn.disabled = true;
+        const originalText = submitBtn.innerText;
+        submitBtn.innerText = '🚀 Publicando...';
+    
+        const { error } = await supabase.from('entradas').insert([{ title, body }]);
+    
+        if (error) {
+          showToast('Error: ' + error.message, 'error');
+        } else {
+          showToast('¡Entrada publicada con éxito!');
+          form.reset();
+          await renderEntries();
+        }
+    
+        submitBtn.disabled = false;
+        submitBtn.innerText = originalText;
       });
-
-      // Carga inicial
+    
       renderEntries();
     </script>
   </body>
