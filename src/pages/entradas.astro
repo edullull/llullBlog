@@ -34,6 +34,21 @@ import BlogStyles from '../components/BlogStyles.astro';
       const supabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
       const supabase = createClient(supabaseUrl, supabaseKey);
 
+      // Función para calcular el tiempo relativo
+      function getRelativeTime(dateInput: any) {
+        if (!dateInput) return '';
+        const date = new Date(dateInput).getTime();
+        const now = new Date().getTime();
+        const diffInSeconds = Math.floor((now - date) / 1000);
+        const rtf = new Intl.RelativeTimeFormat('es', { numeric: 'auto' });
+
+        if (diffInSeconds < 40) return 'ahora mismo';
+        if (diffInSeconds < 3600) return rtf.format(-Math.floor(diffInSeconds / 60), 'minutes');
+        if (diffInSeconds < 86400) return rtf.format(-Math.floor(diffInSeconds / 3600), 'hours');
+        if (diffInSeconds < 604800) return rtf.format(-Math.floor(diffInSeconds / 86400), 'days');
+        return new Date(dateInput).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' });
+      }
+
       const render = async () => {
         const grid = document.getElementById('grid-container');
         if (!grid) return;
@@ -44,7 +59,7 @@ import BlogStyles from '../components/BlogStyles.astro';
           .order('created_at', { ascending: false });
 
         if (error) {
-          grid.innerHTML = '<p class="muted">Error al cargar.</p>';
+          grid.innerHTML = '<p class="muted">Error al cargar las entradas.</p>';
           return;
         }
 
@@ -53,8 +68,9 @@ import BlogStyles from '../components/BlogStyles.astro';
             <article class="blog-card entry-cell" style="display: flex; flex-direction: column; min-height: 250px;">
               <div class="card-top">
                 <h2 class="entry-title">${p.title}</h2>
+                <span class="time-tag">${getRelativeTime(p.created_at)}</span>
               </div>
-              <p class="entry-content">${p.body}</p>
+              <p class="entry-content" style="flex-grow: 1;">${p.body}</p>
               <button class="btn-delete" data-id="${p.id}">Eliminar</button>
             </article>
           `).join('');
@@ -63,8 +79,8 @@ import BlogStyles from '../components/BlogStyles.astro';
             btn.addEventListener('click', async () => {
               if (confirm('¿Eliminar esta entrada permanentemente?')) {
                 const id = btn.getAttribute('data-id');
-                await supabase.from('entradas').delete().eq('id', id);
-                render();
+                const { error: delError } = await supabase.from('entradas').delete().eq('id', id);
+                if (!delError) render();
               }
             });
           });
